@@ -1,9 +1,15 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "CRBRO — Producer / DJ / Engineer",
+  title: "CRBRO — Producer / DJ / Hitmaker",
   description:
-    "Official website of CRBRO. Producer, DJ and engineer shaping the sound behind latin music.",
+    "Official website of CRBRO. Panamanian producer and DJ shaping the sound behind Latin music.",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }) {
