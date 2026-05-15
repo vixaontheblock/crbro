@@ -7,19 +7,28 @@ export const metadata = {
   icons: {
     icon: [
       {
-        url: "/icons/icon-32.png",
+        url: "/favicon.ico?v=crbro-2",
+        sizes: "any",
+      },
+      {
+        url: "/icons/icon-32.png?v=crbro-2",
         sizes: "32x32",
         type: "image/png",
       },
       {
-        url: "/icons/icon-192.png",
+        url: "/icons/icon-192.png?v=crbro-2",
         sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icons/icon-512.png?v=crbro-2",
+        sizes: "512x512",
         type: "image/png",
       },
     ],
     apple: [
       {
-        url: "/icons/apple-touch-icon.png",
+        url: "/icons/apple-touch-icon.png?v=crbro-2",
         sizes: "180x180",
         type: "image/png",
       },
@@ -33,7 +42,7 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/icons/icon-512.png",
+        url: "/icons/icon-512.png?v=crbro-2",
         width: 512,
         height: 512,
         alt: "CRBRO",
@@ -45,7 +54,7 @@ export const metadata = {
     title: "CRBRO — Producer / DJ / Hitmaker",
     description:
       "Official website of CRBRO. Selected credits, music previews, sound packs and bookings.",
-    images: ["/icons/icon-512.png"],
+    images: ["/icons/icon-512.png?v=crbro-2"],
   },
 };
 
