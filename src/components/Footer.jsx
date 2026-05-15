@@ -6,7 +6,14 @@ export default function Footer() {
       <img
         src="/images/crbro-isotype.png"
         alt=""
-        className="footer-isotype-bg"
+        className="footer-isotype-desktop"
+        aria-hidden="true"
+      />
+
+      <img
+        src="/images/crbro-isotype.png"
+        alt=""
+        className="footer-isotype-mobile"
         aria-hidden="true"
       />
 

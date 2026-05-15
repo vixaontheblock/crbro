@@ -1,14 +1,20 @@
 const credits = [
   {
+    id: "relacion",
+    title: "RELACIÓN",
+    appleId: "1510779525",
+    role: "Production Credit",
+  },
+  {
     id: "relacion-remix",
     title: "RELACIÓN REMIX",
     appleId: "1529959308",
     role: "Production Credit",
   },
   {
-    id: "relacion",
-    title: "RELACIÓN",
-    appleId: "1510779525",
+    id: "sal-y-perrea",
+    title: "SAL Y PERREA",
+    appleId: "1558956397",
     role: "Production Credit",
   },
   {
@@ -18,9 +24,39 @@ const credits = [
     role: "Production Credit",
   },
   {
-    id: "sal-y-perrea",
-    title: "SAL Y PERREA",
-    appleId: "1558956397",
+    id: "la-luz",
+    title: "LA LUZ",
+    appleId: "1536517097",
+    role: "Production Credit",
+  },
+  {
+    id: "sal-y-perrea-remix",
+    title: "SAL Y PERREA REMIX",
+    appleId: "1587073235",
+    role: "Production Credit",
+  },
+  {
+    id: "911-remix",
+    title: "911 REMIX",
+    appleId: "1574998381",
+    role: "Production Credit",
+  },
+  {
+    id: "borracho",
+    title: "BORRACHO",
+    appleId: "1595211131",
+    role: "Production Credit",
+  },
+  {
+    id: "te-acuerdas",
+    title: "TE ACUERDAS",
+    appleId: "1558956297",
+    role: "Production Credit",
+  },
+  {
+    id: "1am-no-esperes-un-call",
+    title: "1AM - NO ESPERES UN CALL",
+    appleId: "1860339259",
     role: "Production Credit",
   },
 ];
@@ -55,7 +91,8 @@ async function lookupAppleTrack(credit) {
   return {
     ...credit,
     found: true,
-    trackName: track.trackName,
+    trackName: credit.title,
+    officialTrackName: track.trackName,
     artistName: track.artistName,
     albumName: track.collectionName,
     artwork: biggerArtwork(track.artworkUrl100),
