@@ -2,10 +2,14 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer id="contact" className="footer">
-      <div className="container footer-grid">
+    <footer id="contact" className="footer brand-footer">
+      <div className="container footer-grid brand-footer-grid">
         <div>
-          <p className="eyebrow">CRBRO</p>
+          <img
+            src="/images/crbro-logo.png"
+            alt="CRBRO"
+            className="footer-logo-img"
+          />
 
           <h2 className="footer-title">
             Built for impact.

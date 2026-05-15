@@ -2,29 +2,36 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="hero">
-      <div className="container hero-grid">
-        <div className="hero-copy">
-          <p className="eyebrow">Producer · DJ · Engineer</p>
+    <section className="hero brand-hero">
+      <div className="container hero-grid brand-hero-grid">
+        <div className="hero-copy brand-hero-copy">
+          <p className="eyebrow">Producer · DJ · Hitmaker</p>
 
-          <h1 className="display">CRBRO</h1>
+          <div className="hero-logo-block">
+            <img
+              src="/images/crbro-logo.png"
+              alt="CRBRO Logo"
+              className="hero-logo-img"
+            />
+          </div>
 
           <p className="hero-lead">
-            Crafting the sonic identity behind the next generation of Latin music.
+            Panama-born sound architect shaping Latin music through rhythm,
+            atmosphere and records built for global impact.
           </p>
 
           <div className="btn-row" style={{ marginTop: "34px" }}>
-            <Link href="/credits" className="btn btn-primary">
+            <Link href="/#credits" className="btn btn-primary">
               View Credits
             </Link>
 
-            <Link href="/booking" className="btn btn-secondary">
+            <Link href="/#booking" className="btn btn-secondary">
               Booking
             </Link>
           </div>
         </div>
 
-        <aside className="hero-panel glass">
+        <aside className="hero-panel glass brand-hero-panel">
           <div className="panel-number">
             <strong>1.4B+</strong>
             <span>
@@ -35,8 +42,8 @@ export default function Hero() {
           </div>
 
           <p>
-            Official landing experience for bookings, selected credits, press,
-            production work and creative direction.
+            Official landing experience for selected credits, live previews,
+            bookings, sessions and creative direction.
           </p>
 
           <div className="mini-stats">

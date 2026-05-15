@@ -5,7 +5,8 @@ export default function Marquee() {
     "ROSALÍA",
     "FARRUKO",
     "WISIN & YANDEL",
-    "DÍMELO FLOW",
+    "MUSIC",
+    "PANAMA",
     "CRBRO",
   ];
 

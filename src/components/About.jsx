@@ -12,8 +12,8 @@ export default function About() {
 
         <div className="editorial-card glass">
           <p className="body">
-            CRBRO is a Panamanian producer, DJ and engineer shaping the sound of
-            Latin music through rhythm, atmosphere and high-level collaborations.
+            CRBRO is a Panamanian producer and DJ shaping the sound of Latin
+            music through rhythm, atmosphere and high-level collaborations.
           </p>
 
           <p className="body" style={{ marginTop: "22px" }}>
@@ -33,8 +33,8 @@ export default function About() {
             </div>
 
             <div className="capability">
-              <strong>Engineering</strong>
-              <span>Studio Direction</span>
+              <strong>Studio Sessions</strong>
+              <span>Artists / Labels</span>
             </div>
 
             <div className="capability">

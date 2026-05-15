@@ -10,7 +10,7 @@ import ExperienceLayer from "@/components/ExperienceLayer";
 export default function Home() {
   return (
     <main className="site-main">
-      <ExperienceLayer/>
+      <ExperienceLayer />
       <Navbar />
       <Hero />
       <Marquee />
