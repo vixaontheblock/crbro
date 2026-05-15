@@ -1,96 +1,81 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-
-const credits = [
-  {
-    title: "RELACIÓN REMIX",
-    meta: "Sech · Remix",
-    role: "Production Credit",
-    spotifyId: "PEGAR_ID_AQUI",
-  },
-  {
-    title: "LA LUZ",
-    meta: "Sech · J Balvin",
-    role: "Production Credit",
-    spotifyId: "PEGAR_ID_AQUI",
-  },
-  {
-    title: "GIRL LIKE YOU",
-    meta: "Sech",
-    role: "Production Credit",
-    spotifyId: "PEGAR_ID_AQUI",
-  },
-  {
-    title: "911 REMIX",
-    meta: "Sech · Remix",
-    role: "Production Credit",
-    spotifyId: "PEGAR_ID_AQUI",
-  },
-  {
-    title: "SAL Y PERREA",
-    meta: "Sech",
-    role: "Production Credit",
-    spotifyId: "PEGAR_ID_AQUI",
-  },
-  {
-    title: "LLUEVE",
-    meta: "Wisin & Yandel · Sech",
-    role: "Production Credit",
-    spotifyId: "PEGAR_ID_AQUI",
-  },
-];
-
-function formatDuration(ms) {
-  if (!ms) return "";
-  const minutes = Math.floor(ms / 60000);
-  const seconds = Math.floor((ms % 60000) / 1000)
-    .toString()
-    .padStart(2, "0");
-
-  return `${minutes}:${seconds}`;
-}
+import { useEffect, useRef, useState } from "react";
 
 export default function Credits() {
-  const [spotifyTracks, setSpotifyTracks] = useState({});
-  const [loading, setLoading] = useState(true);
+  const audioRef = useRef(null);
 
-  const validIds = useMemo(() => {
-    return credits
-      .map((credit) => credit.spotifyId)
-      .filter((id) => id && id !== "PEGAR_ID_AQUI");
-  }, []);
+  const [tracks, setTracks] = useState([]);
+  const [activeTrack, setActiveTrack] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (validIds.length === 0) {
-      setLoading(false);
-      return;
-    }
-
-    async function loadTracks() {
+    async function loadCredits() {
       try {
-        const response = await fetch(
-          `/api/spotify/tracks?ids=${validIds.join(",")}`
-        );
-
+        const response = await fetch("/api/music/credits");
         const data = await response.json();
-
-        const mappedTracks = {};
-
-        data.tracks?.forEach((track) => {
-          mappedTracks[track.id] = track;
-        });
-
-        setSpotifyTracks(mappedTracks);
+        setTracks(data.tracks || []);
       } catch (error) {
-        console.error("Spotify fetch error:", error);
-      } finally {
-        setLoading(false);
+        console.error("Music credits error:", error);
       }
     }
 
-    loadTracks();
-  }, [validIds]);
+    loadCredits();
+  }, []);
+
+  useEffect(() => {
+    audioRef.current = new Audio();
+
+    const audio = audioRef.current;
+
+    const updateProgress = () => {
+      if (!audio.duration) return;
+      setProgress((audio.currentTime / audio.duration) * 100);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setProgress(0);
+    };
+
+    audio.addEventListener("timeupdate", updateProgress);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.pause();
+      audio.removeEventListener("timeupdate", updateProgress);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+  async function togglePreview(track) {
+    const audio = audioRef.current;
+
+    if (!audio || !track.previewUrl) return;
+
+    if (activeTrack === track.id && isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+      return;
+    }
+
+    if (activeTrack !== track.id) {
+      audio.pause();
+      audio.src = track.previewUrl;
+      audio.currentTime = 0;
+      setProgress(0);
+      setActiveTrack(track.id);
+    }
+
+    try {
+      await audio.play();
+      setIsPlaying(true);
+    } catch (error) {
+      console.error("Preview play error:", error);
+      setIsPlaying(false);
+    }
+  }
 
   return (
     <section id="credits" className="section credits-section">
@@ -98,82 +83,70 @@ export default function Credits() {
         <div className="section-head">
           <div>
             <p className="eyebrow">Credits</p>
-
             <h2 className="title">Selected works.</h2>
           </div>
 
-          <p className="body" style={{ maxWidth: "430px" }}>
-            Live Spotify metadata connected to selected CRBRO credits: official
-            artwork, track data, preview availability and streaming links.
+          <p className="body" style={{ maxWidth: "440px" }}>
+            Selected records connected to CRBRO’s sound, with live artwork,
+            official metadata and preview playback.
           </p>
         </div>
 
-        <div className="credits-grid spotify-credits-grid">
-          {credits.map((credit, index) => {
-            const track = spotifyTracks[credit.spotifyId];
-            const title = track?.name || credit.title;
-            const artists = track?.artists || credit.meta;
-            const image = track?.image;
-            const duration = formatDuration(track?.durationMs);
+        <div className="music-grid">
+          {tracks.map((track, index) => {
+            const active = activeTrack === track.id;
+            const playing = active && isPlaying;
 
             return (
-              <article className="credit-card spotify-credit-card" key={credit.title}>
-                <div className="credit-top">
-                  <span className="credit-index">0{index + 1}</span>
-                  <span className="credit-pill">
-                    {loading ? "Loading" : "Spotify"}
-                  </span>
+              <article
+                className={`music-card ${active ? "is-playing" : ""}`}
+                key={track.id}
+              >
+                <div className="music-card-top">
+                  <span>0{index + 1}</span>
+                  <span>{track.previewUrl ? "Preview" : "Credit"}</span>
                 </div>
 
-                <div className="spotify-art-wrap">
-                  {image ? (
+                <div className="music-cover">
+                  {track.artwork ? (
                     <img
-                      className="spotify-art"
-                      src={image}
-                      alt={`${title} album artwork`}
+                      src={track.artwork}
+                      alt={`${track.trackName || track.title} artwork`}
                     />
                   ) : (
-                    <div className="spotify-art-placeholder">
-                      <span>CRBRO</span>
-                    </div>
+                    <div className="music-cover-fallback">CRBRO</div>
                   )}
                 </div>
 
-                <div>
-                  <p className="credit-meta">{artists}</p>
+                <div className="music-copy">
+                  <p className="music-artist">
+                    {track.artistName || "CRBRO Credit"}
+                  </p>
 
-                  <h3 className="credit-title">{title}</h3>
+                  <h3>{track.trackName || track.title}</h3>
 
-                  <div className="spotify-track-info">
-                    <span>{credit.role}</span>
-                    {duration && <span>{duration}</span>}
+                  <div className="music-meta">
+                    <span>{track.role}</span>
+                    <span>{track.previewUrl ? "30s Preview" : "No Preview"}</span>
                   </div>
 
-                  {track?.previewUrl ? (
-                    <audio
-                      className="spotify-preview"
-                      controls
-                      src={track.previewUrl}
-                    />
-                  ) : (
-                    <p className="spotify-no-preview">
-                      Preview unavailable. Listen on Spotify.
-                    </p>
-                  )}
+                  <div className="music-progress">
+                    <span style={{ width: active ? `${progress}%` : "0%" }} />
+                  </div>
 
-                  <div className="spotify-actions">
-                    {track?.spotifyUrl ? (
-                      <a
-                        href={track.spotifyUrl}
-                        target="_blank"
-                        className="spotify-button"
-                      >
-                        Open on Spotify
+                  <div className="music-actions">
+                    <button
+                      type="button"
+                      disabled={!track.previewUrl}
+                      onClick={() => togglePreview(track)}
+                    >
+                      {playing ? "Pause" : "Play"}
+                    </button>
+
+                    {track.storeUrl && (
+                      <a href={track.storeUrl} target="_blank">
+                        Open
                       </a>
-                    ) : (
-                      <span className="spotify-button disabled">
-                        Add Spotify ID
-                      </span>
                     )}
                   </div>
                 </div>
