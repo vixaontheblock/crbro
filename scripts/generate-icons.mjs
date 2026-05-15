@@ -14,9 +14,7 @@ async function ensureDirs() {
   await fs.mkdir(appDir, { recursive: true });
 }
 
-async function generatePng(size) {
-  const output = path.join(outputDir, `icon-${size}.png`);
-
+async function makePng(size) {
   await sharp(input)
     .resize(size, size, {
       fit: "contain",
@@ -24,12 +22,12 @@ async function generatePng(size) {
     })
     .flatten({ background: "#111111" })
     .png()
-    .toFile(output);
+    .toFile(path.join(outputDir, `icon-${size}.png`));
 
   console.log(`Created public/icons/icon-${size}.png`);
 }
 
-async function generateFavicons() {
+async function makeIco() {
   const favicon16 = path.join(outputDir, "favicon-16.png");
   const favicon32 = path.join(outputDir, "favicon-32.png");
   const favicon48 = path.join(outputDir, "favicon-48.png");
@@ -52,16 +50,21 @@ async function generateFavicons() {
     .png()
     .toFile(favicon48);
 
-  const icoBuffer = await pngToIco([favicon16, favicon32, favicon48]);
+  const ico = await pngToIco([favicon16, favicon32, favicon48]);
 
-  await fs.writeFile(path.join(appDir, "favicon.ico"), icoBuffer);
-  await fs.writeFile(path.join(process.cwd(), "public/favicon.ico"), icoBuffer);
+  await fs.writeFile(path.join(appDir, "favicon.ico"), ico);
+  await fs.writeFile(path.join(appDir, "icon.ico"), ico);
+  await fs.writeFile(path.join(outputDir, "favicon.ico"), ico);
+  await fs.writeFile(path.join(process.cwd(), "public/favicon.ico"), ico);
+  await fs.writeFile(path.join(process.cwd(), "public/icon.ico"), ico);
 
   console.log("Created src/app/favicon.ico");
+  console.log("Created src/app/icon.ico");
   console.log("Created public/favicon.ico");
+  console.log("Created public/icon.ico");
 }
 
-async function generateNextIcons() {
+async function makeNextIcons() {
   await sharp(input)
     .resize(512, 512, {
       fit: "contain",
@@ -95,18 +98,15 @@ async function generateNextIcons() {
 }
 
 async function main() {
-  try {
-    await ensureDirs();
+  await ensureDirs();
+  await Promise.all(sizes.map(makePng));
+  await makeIco();
+  await makeNextIcons();
 
-    await Promise.all(sizes.map(generatePng));
-    await generateFavicons();
-    await generateNextIcons();
-
-    console.log("All CRBRO icons generated successfully.");
-  } catch (error) {
-    console.error("Icon generation failed:", error);
-    process.exit(1);
-  }
+  console.log("CRBRO icons generated.");
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
