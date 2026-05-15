@@ -1759,3 +1759,121 @@ body::after {
   background: #111111;
   pointer-events: none;
 }
+
+/* ================================
+   CRBRO DARK HEADER / IOS SAFE AREA
+================================ */
+
+:root {
+  --crbro-header-dark: #111111;
+  --crbro-header-sepia: #1b130e;
+  --crbro-header-line: rgba(240, 192, 149, 0.22);
+}
+
+/* Global dark background so footer never turns white */
+html,
+body {
+  background: #111111 !important;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.site-main {
+  background: #111111 !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* Header now dark, edge-to-edge */
+.brand-nav-wrap {
+  background: #111111 !important;
+}
+
+.brand-nav {
+  background:
+    linear-gradient(90deg, #111111 0%, #1b130e 48%, #111111 100%) !important;
+  color: #f4efe7 !important;
+  border-bottom: 2px solid var(--crbro-header-line) !important;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.38) !important;
+}
+
+/* Make logo visible on dark header */
+.brand-logo-img {
+  filter: brightness(0) invert(1) !important;
+  opacity: 0.96 !important;
+}
+
+/* Header menu colors */
+.brand-nav-links a {
+  color: #f4efe7 !important;
+}
+
+.brand-nav-links a:hover {
+  color: #c08a58 !important;
+}
+
+/* Book button on dark header */
+.brand-book-link {
+  background: #f4efe7 !important;
+  color: #111111 !important;
+  border: 2px solid #f4efe7 !important;
+}
+
+.brand-book-link:hover {
+  background: #c08a58 !important;
+  color: #111111 !important;
+  border-color: #c08a58 !important;
+}
+
+/* iOS top safe area should match dark header */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .brand-nav-wrap {
+    background: #111111 !important;
+    padding-top: env(safe-area-inset-top) !important;
+  }
+
+  .brand-nav {
+    margin-top: 0 !important;
+  }
+}
+
+/* Footer bottom safe area stays dark */
+.footer,
+.brand-footer {
+  background: #111111 !important;
+  padding-bottom: calc(34px + env(safe-area-inset-bottom)) !important;
+  margin-bottom: 0 !important;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -90px;
+  height: 180px;
+  z-index: -1;
+  background: #111111;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .brand-nav-wrap {
+    background: #111111 !important;
+  }
+
+  .brand-nav {
+    background:
+      linear-gradient(90deg, #111111 0%, #1b130e 48%, #111111 100%) !important;
+    border-bottom: 2px solid rgba(240, 192, 149, 0.18) !important;
+  }
+
+  .hero,
+  .brand-hero {
+    padding-top: calc(118px + env(safe-area-inset-top)) !important;
+  }
+}
