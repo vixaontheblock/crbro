@@ -3,6 +3,13 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer id="contact" className="footer brand-footer">
+      <img
+        src="/images/crbro-isotype.png"
+        alt=""
+        className="footer-isotype-bg"
+        aria-hidden="true"
+      />
+
       <div className="container footer-grid brand-footer-grid">
         <div>
           <img
@@ -19,6 +26,7 @@ export default function Footer() {
         <div className="footer-links">
           <Link href="/#about">About</Link>
           <Link href="/#credits">Credits</Link>
+          <Link href="/#sound-packs">Sound Packs</Link>
           <Link href="/#booking">Booking</Link>
           <Link href="/#contact">Contact</Link>
         </div>
