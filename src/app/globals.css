@@ -1719,3 +1719,43 @@ select {
     bottom: -20px !important;
   }
 }
+
+/* ================================
+   IOS SAFARI BOTTOM WHITE FIX
+================================ */
+
+html,
+body {
+  background: #111111 !important;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.site-main {
+  background: #111111 !important;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.footer,
+.brand-footer {
+  background: #111111 !important;
+  padding-bottom: calc(34px + env(safe-area-inset-bottom)) !important;
+  margin-bottom: 0 !important;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: -80px;
+  height: 160px;
+  z-index: -1;
+  background: #111111;
+  pointer-events: none;
+}
