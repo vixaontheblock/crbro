@@ -4,9 +4,8 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Credits() {
-  const sectionRef = useRef(null);
   const audioRef = useRef(null);
-  const activeIndexRef = useRef(0);
+  const railRef = useRef(null);
   const playingIdRef = useRef(null);
 
   const [tracks, setTracks] = useState([]);
@@ -66,87 +65,62 @@ export default function Credits() {
     };
   }, []);
 
-  useEffect(() => {
-    let ticking = false;
-    let frameId = null;
+  function stopPreview() {
+    const audio = audioRef.current;
 
-    function stopPreview() {
-      const audio = audioRef.current;
-
-      if (audio) {
-        audio.pause();
-        audio.currentTime = 0;
-      }
-
-      playingIdRef.current = null;
-      setPlayingId(null);
-      setProgress(0);
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
     }
 
-    function updateActiveTrack() {
-      const section = sectionRef.current;
+    playingIdRef.current = null;
+    setPlayingId(null);
+    setProgress(0);
+  }
 
-      if (!section || tracks.length === 0) {
-        ticking = false;
-        return;
-      }
+  function goToTrack(index) {
+    const rail = railRef.current;
+    const card = rail?.querySelector(`[data-credit-index="${index}"]`);
 
-      const start = section.offsetTop;
-      const scrollableDistance = section.offsetHeight - window.innerHeight;
-      const currentScroll = window.scrollY - start;
+    if (!rail || !card) return;
 
-      const rawProgress = currentScroll / scrollableDistance;
-      const safeProgress = Math.min(Math.max(rawProgress, 0), 1);
+    stopPreview();
+    setActiveIndex(index);
 
-      const nextIndex = Math.min(
-        tracks.length - 1,
-        Math.round(safeProgress * (tracks.length - 1))
-      );
-
-      if (nextIndex !== activeIndexRef.current) {
-        activeIndexRef.current = nextIndex;
-        stopPreview();
-        setActiveIndex(nextIndex);
-      }
-
-      ticking = false;
-    }
-
-    function handleScroll() {
-      if (!ticking) {
-        ticking = true;
-        frameId = window.requestAnimationFrame(updateActiveTrack);
-      }
-    }
-
-    frameId = window.requestAnimationFrame(updateActiveTrack);
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", updateActiveTrack);
-
-    return () => {
-      if (frameId) {
-        window.cancelAnimationFrame(frameId);
-      }
-
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", updateActiveTrack);
-    };
-  }, [tracks.length]);
-
-  function scrollToTrack(index) {
-    const section = sectionRef.current;
-
-    if (!section || tracks.length <= 1) return;
-
-    const start = section.offsetTop;
-    const scrollableDistance = section.offsetHeight - window.innerHeight;
-    const target = start + scrollableDistance * (index / (tracks.length - 1));
-
-    window.scrollTo({
-      top: target,
+    card.scrollIntoView({
       behavior: "smooth",
+      inline: "center",
+      block: "nearest",
     });
+  }
+
+  function handleRailScroll() {
+    const rail = railRef.current;
+
+    if (!rail || tracks.length === 0) return;
+
+    const cards = Array.from(rail.querySelectorAll("[data-credit-index]"));
+
+    let closestIndex = activeIndex;
+    let closestDistance = Infinity;
+
+    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
+
+    cards.forEach((card) => {
+      const index = Number(card.dataset.creditIndex);
+      const cardCenter = card.offsetLeft + card.clientWidth / 2;
+      const distance = Math.abs(cardCenter - railCenter);
+
+      if (distance < closestDistance) {
+        closestDistance = distance;
+        closestIndex = index;
+      }
+    });
+
+    if (closestIndex !== activeIndex) {
+      stopPreview();
+      setActiveIndex(closestIndex);
+    }
   }
 
   async function togglePreview(track) {
@@ -178,114 +152,102 @@ export default function Credits() {
   }
 
   return (
-    <section
-      ref={sectionRef}
-      id="credits"
-      className="credits-section credits-scroll-section"
-      style={{ "--credits-count": Math.max(tracks.length, 1) }}
-    >
-      <div className="credits-sticky">
-        <div className="container credits-showcase-grid">
-          <div className="credits-showcase-copy">
+    <section id="credits" className="credits-section credits-carousel-section">
+      <div className="container">
+        <div className="credits-carousel-head">
+          <div>
             <p className="eyebrow">Selected Credits</p>
 
-            <h2 className="title credits-showcase-title">
+            <h2 className="title credits-carousel-title">
               Records in motion.
             </h2>
-
-            <p className="body credits-showcase-body">
-              Selected records connected to CRBRO’s production, sound and
-              creative direction. Keep scrolling to move through each credit.
-            </p>
-
-            {activeTrack && (
-              <div className="credits-active-meta">
-                <span>
-                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                  {String(tracks.length).padStart(2, "0")}
-                </span>
-
-                <strong>{activeTrack.trackName || activeTrack.title}</strong>
-
-                <p>{activeTrack.artistName}</p>
-              </div>
-            )}
-
-            <div className="credits-scroll-rail">
-              {tracks.map((track, index) => (
-                <button
-                  key={track.id}
-                  type="button"
-                  className={index === activeIndex ? "is-active" : ""}
-                  onClick={() => scrollToTrack(index)}
-                  aria-label={`Go to ${track.trackName || track.title}`}
-                >
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <b>{track.trackName || track.title}</b>
-                </button>
-              ))}
-            </div>
           </div>
 
-          <div className="credits-slide-stage">
-            {activeTrack ? (
-              <article key={activeTrack.id} className="credits-slide-card">
-                <div className="credits-slide-cover">
-                  {activeTrack.artwork ? (
+          <p className="body credits-carousel-body">
+            Selected records connected to CRBRO’s production, sound and creative
+            direction. Slide through the credits and play previews.
+          </p>
+        </div>
+
+        {activeTrack && (
+          <div className="credits-current-row">
+            <span>
+              {String(activeIndex + 1).padStart(2, "0")} /{" "}
+              {String(tracks.length).padStart(2, "0")}
+            </span>
+
+            <strong>{activeTrack.trackName || activeTrack.title}</strong>
+
+            <p>{activeTrack.artistName}</p>
+          </div>
+        )}
+
+        <div className="credits-carousel-shell">
+          <div
+            ref={railRef}
+            className="credits-carousel-rail"
+            onScroll={handleRailScroll}
+          >
+            {tracks.map((track, index) => (
+              <article
+                key={track.id}
+                data-credit-index={index}
+                className={`credits-carousel-card ${
+                  index === activeIndex ? "is-active" : ""
+                }`}
+              >
+                <div className="credits-carousel-cover">
+                  {track.artwork ? (
                     <Image
-                      src={activeTrack.artwork}
-                      alt={activeTrack.trackName || activeTrack.title}
+                      src={track.artwork}
+                      alt={track.trackName || track.title}
                       fill
-                      sizes="(max-width: 900px) 100vw, 320px"
-                      className="credits-slide-image"
-                      priority={activeIndex === 0}
+                      sizes="(max-width: 900px) 86vw, 420px"
+                      className="credits-carousel-image"
+                      priority={index === 0}
                     />
                   ) : (
-                    <div className="credits-slide-fallback">CRBRO</div>
+                    <div className="credits-carousel-fallback">CRBRO</div>
                   )}
                 </div>
 
-                <div className="credits-slide-content">
-                  <div>
-                    <div className="credits-slide-top">
-                      <span>{String(activeIndex + 1).padStart(2, "0")}</span>
-                      <span>{activeTrack.role || "Production Credit"}</span>
-                    </div>
-
-                    <p>{activeTrack.artistName}</p>
-
-                    <h3>{activeTrack.trackName || activeTrack.title}</h3>
+                <div className="credits-carousel-info">
+                  <div className="credits-carousel-top">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <span>{track.role || "Production Credit"}</span>
                   </div>
 
                   <div>
-                    <div className="credits-slide-meta">
-                      <span>{activeTrack.albumName || "Selected Credit"}</span>
-                      <span>
-                        {playingId === activeTrack.id ? "Playing" : "Preview"}
-                      </span>
+                    <p>{track.artistName}</p>
+                    <h3>{track.trackName || track.title}</h3>
+                  </div>
+
+                  <div>
+                    <div className="credits-carousel-meta">
+                      <span>{track.albumName || "Selected Credit"}</span>
+                      <span>{playingId === track.id ? "Playing" : "Preview"}</span>
                     </div>
 
-                    <div className="credits-slide-progress">
+                    <div className="credits-carousel-progress">
                       <span
                         style={{
-                          width:
-                            playingId === activeTrack.id ? `${progress}%` : "0%",
+                          width: playingId === track.id ? `${progress}%` : "0%",
                         }}
                       />
                     </div>
 
-                    <div className="credits-slide-actions">
+                    <div className="credits-carousel-actions">
                       <button
                         type="button"
-                        disabled={!activeTrack.previewUrl}
-                        onClick={() => togglePreview(activeTrack)}
+                        disabled={!track.previewUrl}
+                        onClick={() => togglePreview(track)}
                       >
-                        {playingId === activeTrack.id ? "Pause" : "Play"}
+                        {playingId === track.id ? "Pause" : "Play"}
                       </button>
 
-                      {activeTrack.storeUrl && (
+                      {track.storeUrl && (
                         <a
-                          href={activeTrack.storeUrl}
+                          href={track.storeUrl}
                           target="_blank"
                           rel="noreferrer"
                         >
@@ -296,13 +258,22 @@ export default function Credits() {
                   </div>
                 </div>
               </article>
-            ) : (
-              <div className="credits-slide-loading">
-                <p className="eyebrow">Loading</p>
-                <h3>Fetching credits.</h3>
-              </div>
-            )}
+            ))}
           </div>
+        </div>
+
+        <div className="credits-carousel-nav">
+          {tracks.map((track, index) => (
+            <button
+              key={track.id}
+              type="button"
+              className={index === activeIndex ? "is-active" : ""}
+              onClick={() => goToTrack(index)}
+              aria-label={`Go to ${track.trackName || track.title}`}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </button>
+          ))}
         </div>
       </div>
     </section>
