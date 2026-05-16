@@ -78,33 +78,16 @@ export default function Credits() {
     setProgress(0);
   }
 
-  function goToTrack(index) {
-    const rail = railRef.current;
-    const card = rail?.querySelector(`[data-credit-index="${index}"]`);
-
-    if (!rail || !card) return;
-
-    stopPreview();
-    setActiveIndex(index);
-
-    card.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  }
-
   function handleRailScroll() {
     const rail = railRef.current;
 
     if (!rail || tracks.length === 0) return;
 
     const cards = Array.from(rail.querySelectorAll("[data-credit-index]"));
+    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
 
     let closestIndex = activeIndex;
     let closestDistance = Infinity;
-
-    const railCenter = rail.scrollLeft + rail.clientWidth / 2;
 
     cards.forEach((card) => {
       const index = Number(card.dataset.creditIndex);
@@ -121,6 +104,35 @@ export default function Credits() {
       stopPreview();
       setActiveIndex(closestIndex);
     }
+  }
+
+  function handleWheel(event) {
+    const rail = railRef.current;
+
+    if (!rail) return;
+
+    const isMobile = window.innerWidth <= 900;
+    if (isMobile) return;
+
+    const delta =
+      Math.abs(event.deltaX) > Math.abs(event.deltaY)
+        ? event.deltaX
+        : event.deltaY;
+
+    const maxScroll = rail.scrollWidth - rail.clientWidth;
+    const atStart = rail.scrollLeft <= 2;
+    const atEnd = rail.scrollLeft >= maxScroll - 2;
+
+    if ((delta < 0 && atStart) || (delta > 0 && atEnd)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    rail.scrollBy({
+      left: delta,
+      behavior: "auto",
+    });
   }
 
   async function togglePreview(track) {
@@ -165,7 +177,7 @@ export default function Credits() {
 
           <p className="body credits-carousel-body">
             Selected records connected to CRBRO’s production, sound and creative
-            direction. Slide through the credits and play previews.
+            direction. Scroll through the credits and play previews.
           </p>
         </div>
 
@@ -182,7 +194,7 @@ export default function Credits() {
           </div>
         )}
 
-        <div className="credits-carousel-shell">
+        <div className="credits-carousel-shell" onWheel={handleWheel}>
           <div
             ref={railRef}
             className="credits-carousel-rail"
@@ -225,7 +237,9 @@ export default function Credits() {
                   <div>
                     <div className="credits-carousel-meta">
                       <span>{track.albumName || "Selected Credit"}</span>
-                      <span>{playingId === track.id ? "Playing" : "Preview"}</span>
+                      <span>
+                        {playingId === track.id ? "Playing" : "Preview"}
+                      </span>
                     </div>
 
                     <div className="credits-carousel-progress">
@@ -262,18 +276,19 @@ export default function Credits() {
           </div>
         </div>
 
-        <div className="credits-carousel-nav">
-          {tracks.map((track, index) => (
-            <button
-              key={track.id}
-              type="button"
-              className={index === activeIndex ? "is-active" : ""}
-              onClick={() => goToTrack(index)}
-              aria-label={`Go to ${track.trackName || track.title}`}
-            >
-              {String(index + 1).padStart(2, "0")}
-            </button>
-          ))}
+        <div className="credits-carousel-footer">
+          <span>Scroll / swipe</span>
+
+          <div className="credits-carousel-bar">
+            <i
+              style={{
+                width:
+                  tracks.length > 0
+                    ? `${((activeIndex + 1) / tracks.length) * 100}%`
+                    : "0%",
+              }}
+            />
+          </div>
         </div>
       </div>
     </section>
