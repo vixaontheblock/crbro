@@ -1,43 +1,60 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function Credits() {
+  const sectionRef = useRef(null);
   const audioRef = useRef(null);
+  const activeIndexRef = useRef(0);
+  const playingIdRef = useRef(null);
 
   const [tracks, setTracks] = useState([]);
-  const [activeTrack, setActiveTrack] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [playingId, setPlayingId] = useState(null);
   const [progress, setProgress] = useState(0);
 
+  const activeTrack = useMemo(() => {
+    return tracks[activeIndex] || null;
+  }, [tracks, activeIndex]);
+
   useEffect(() => {
-    async function loadCredits() {
+    let cancelled = false;
+
+    async function loadTracks() {
       try {
         const response = await fetch("/api/music/credits");
         const data = await response.json();
-        setTracks(data.tracks || []);
+
+        if (!cancelled && Array.isArray(data.tracks)) {
+          setTracks(data.tracks);
+        }
       } catch (error) {
-        console.error("Music credits error:", error);
+        console.error("Credits load error:", error);
       }
     }
 
-    loadCredits();
+    loadTracks();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
-    audioRef.current = new Audio();
+    const audio = new Audio();
+    audioRef.current = audio;
 
-    const audio = audioRef.current;
-
-    const updateProgress = () => {
+    function updateProgress() {
       if (!audio.duration) return;
       setProgress((audio.currentTime / audio.duration) * 100);
-    };
+    }
 
-    const handleEnded = () => {
-      setIsPlaying(false);
+    function handleEnded() {
+      playingIdRef.current = null;
+      setPlayingId(null);
       setProgress(0);
-    };
+    }
 
     audio.addEventListener("timeupdate", updateProgress);
     audio.addEventListener("ended", handleEnded);
@@ -49,110 +66,243 @@ export default function Credits() {
     };
   }, []);
 
+  useEffect(() => {
+    let ticking = false;
+    let frameId = null;
+
+    function stopPreview() {
+      const audio = audioRef.current;
+
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+
+      playingIdRef.current = null;
+      setPlayingId(null);
+      setProgress(0);
+    }
+
+    function updateActiveTrack() {
+      const section = sectionRef.current;
+
+      if (!section || tracks.length === 0) {
+        ticking = false;
+        return;
+      }
+
+      const start = section.offsetTop;
+      const scrollableDistance = section.offsetHeight - window.innerHeight;
+      const currentScroll = window.scrollY - start;
+
+      const rawProgress = currentScroll / scrollableDistance;
+      const safeProgress = Math.min(Math.max(rawProgress, 0), 1);
+
+      const nextIndex = Math.min(
+        tracks.length - 1,
+        Math.round(safeProgress * (tracks.length - 1))
+      );
+
+      if (nextIndex !== activeIndexRef.current) {
+        activeIndexRef.current = nextIndex;
+        stopPreview();
+        setActiveIndex(nextIndex);
+      }
+
+      ticking = false;
+    }
+
+    function handleScroll() {
+      if (!ticking) {
+        ticking = true;
+        frameId = window.requestAnimationFrame(updateActiveTrack);
+      }
+    }
+
+    frameId = window.requestAnimationFrame(updateActiveTrack);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", updateActiveTrack);
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateActiveTrack);
+    };
+  }, [tracks.length]);
+
+  function scrollToTrack(index) {
+    const section = sectionRef.current;
+
+    if (!section || tracks.length <= 1) return;
+
+    const start = section.offsetTop;
+    const scrollableDistance = section.offsetHeight - window.innerHeight;
+    const target = start + scrollableDistance * (index / (tracks.length - 1));
+
+    window.scrollTo({
+      top: target,
+      behavior: "smooth",
+    });
+  }
+
   async function togglePreview(track) {
+    if (!track?.previewUrl || !audioRef.current) return;
+
     const audio = audioRef.current;
 
-    if (!audio || !track.previewUrl) return;
-
-    if (activeTrack === track.id && isPlaying) {
+    if (playingIdRef.current === track.id) {
       audio.pause();
-      setIsPlaying(false);
+      playingIdRef.current = null;
+      setPlayingId(null);
       return;
     }
 
-    if (activeTrack !== track.id) {
-      audio.pause();
-      audio.src = track.previewUrl;
-      audio.currentTime = 0;
-      setProgress(0);
-      setActiveTrack(track.id);
-    }
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = track.previewUrl;
 
     try {
       await audio.play();
-      setIsPlaying(true);
+      playingIdRef.current = track.id;
+      setPlayingId(track.id);
+      setProgress(0);
     } catch (error) {
       console.error("Preview play error:", error);
-      setIsPlaying(false);
+      playingIdRef.current = null;
+      setPlayingId(null);
     }
   }
 
   return (
-    <section id="credits" className="section credits-section">
-      <div className="container">
-        <div className="section-head">
-          <div>
-            <p className="eyebrow">Credits</p>
-            <h2 className="title">Selected works.</h2>
+    <section
+      ref={sectionRef}
+      id="credits"
+      className="credits-section credits-scroll-section"
+      style={{ "--credits-count": Math.max(tracks.length, 1) }}
+    >
+      <div className="credits-sticky">
+        <div className="container credits-showcase-grid">
+          <div className="credits-showcase-copy">
+            <p className="eyebrow">Selected Credits</p>
+
+            <h2 className="title credits-showcase-title">
+              Records in motion.
+            </h2>
+
+            <p className="body credits-showcase-body">
+              Selected records connected to CRBRO’s production, sound and
+              creative direction. Keep scrolling to move through each credit.
+            </p>
+
+            {activeTrack && (
+              <div className="credits-active-meta">
+                <span>
+                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(tracks.length).padStart(2, "0")}
+                </span>
+
+                <strong>{activeTrack.trackName || activeTrack.title}</strong>
+
+                <p>{activeTrack.artistName}</p>
+              </div>
+            )}
+
+            <div className="credits-scroll-rail">
+              {tracks.map((track, index) => (
+                <button
+                  key={track.id}
+                  type="button"
+                  className={index === activeIndex ? "is-active" : ""}
+                  onClick={() => scrollToTrack(index)}
+                  aria-label={`Go to ${track.trackName || track.title}`}
+                >
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <b>{track.trackName || track.title}</b>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <p className="body" style={{ maxWidth: "440px" }}>
-            Selected records connected to CRBRO’s sound, with live artwork,
-            official metadata and preview playback.
-          </p>
-        </div>
-
-        <div className="music-grid">
-          {tracks.map((track, index) => {
-            const active = activeTrack === track.id;
-            const playing = active && isPlaying;
-
-            return (
-              <article
-                className={`music-card ${active ? "is-playing" : ""}`}
-                key={track.id}
-              >
-                <div className="music-card-top">
-                  <span>0{index + 1}</span>
-                  <span>{track.previewUrl ? "Preview" : "Credit"}</span>
-                </div>
-
-                <div className="music-cover">
-                  {track.artwork ? (
-                    <img
-                      src={track.artwork}
-                      alt={`${track.trackName || track.title} artwork`}
+          <div className="credits-slide-stage">
+            {activeTrack ? (
+              <article key={activeTrack.id} className="credits-slide-card">
+                <div className="credits-slide-cover">
+                  {activeTrack.artwork ? (
+                    <Image
+                      src={activeTrack.artwork}
+                      alt={activeTrack.trackName || activeTrack.title}
+                      fill
+                      sizes="(max-width: 900px) 100vw, 320px"
+                      className="credits-slide-image"
+                      priority={activeIndex === 0}
                     />
                   ) : (
-                    <div className="music-cover-fallback">CRBRO</div>
+                    <div className="credits-slide-fallback">CRBRO</div>
                   )}
                 </div>
 
-                <div className="music-copy">
-                  <p className="music-artist">
-                    {track.artistName || "CRBRO Credit"}
-                  </p>
+                <div className="credits-slide-content">
+                  <div>
+                    <div className="credits-slide-top">
+                      <span>{String(activeIndex + 1).padStart(2, "0")}</span>
+                      <span>{activeTrack.role || "Production Credit"}</span>
+                    </div>
 
-                  <h3>{track.trackName || track.title}</h3>
+                    <p>{activeTrack.artistName}</p>
 
-                  <div className="music-meta">
-                    <span>{track.role}</span>
-                    <span>{track.previewUrl ? "30s Preview" : "No Preview"}</span>
+                    <h3>{activeTrack.trackName || activeTrack.title}</h3>
                   </div>
 
-                  <div className="music-progress">
-                    <span style={{ width: active ? `${progress}%` : "0%" }} />
-                  </div>
+                  <div>
+                    <div className="credits-slide-meta">
+                      <span>{activeTrack.albumName || "Selected Credit"}</span>
+                      <span>
+                        {playingId === activeTrack.id ? "Playing" : "Preview"}
+                      </span>
+                    </div>
 
-                  <div className="music-actions">
-                    <button
-                      type="button"
-                      disabled={!track.previewUrl}
-                      onClick={() => togglePreview(track)}
-                    >
-                      {playing ? "Pause" : "Play"}
-                    </button>
+                    <div className="credits-slide-progress">
+                      <span
+                        style={{
+                          width:
+                            playingId === activeTrack.id ? `${progress}%` : "0%",
+                        }}
+                      />
+                    </div>
 
-                    {track.storeUrl && (
-                      <a href={track.storeUrl} target="_blank">
-                        Open
-                      </a>
-                    )}
+                    <div className="credits-slide-actions">
+                      <button
+                        type="button"
+                        disabled={!activeTrack.previewUrl}
+                        onClick={() => togglePreview(activeTrack)}
+                      >
+                        {playingId === activeTrack.id ? "Pause" : "Play"}
+                      </button>
+
+                      {activeTrack.storeUrl && (
+                        <a
+                          href={activeTrack.storeUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Open
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </article>
-            );
-          })}
+            ) : (
+              <div className="credits-slide-loading">
+                <p className="eyebrow">Loading</p>
+                <h3>Fetching credits.</h3>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>
