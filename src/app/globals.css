@@ -2784,3 +2784,60 @@ textarea.field {
     flex: 0 0 42px;
   }
 }
+
+/* ================================
+   CREDITS CAROUSEL — NO NUMBER DOTS + SCROLL CONTROL
+================================ */
+
+.credits-carousel-shell {
+  overscroll-behavior-x: contain;
+}
+
+.credits-carousel-footer {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.credits-carousel-footer span {
+  color: var(--crbro-brown);
+  font-size: 10px;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.credits-carousel-bar {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(47, 23, 14, 0.12);
+}
+
+.credits-carousel-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--crbro-brown), var(--crbro-sepia));
+  transition: width 0.25s ease;
+}
+
+/* Oculta los números viejos si todavía quedó markup anterior */
+.credits-carousel-nav {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .credits-carousel-footer {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .credits-carousel-footer span {
+    font-size: 9px;
+  }
+}
