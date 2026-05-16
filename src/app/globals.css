@@ -2841,3 +2841,43 @@ textarea.field {
     font-size: 9px;
   }
 }
+
+/* ================================
+   CREDITS COVER FULL SIZE FIX
+================================ */
+
+.credits-carousel-cover {
+  position: relative !important;
+  min-height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(170, 116, 68, 0.18), transparent 42%),
+    #111111 !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: hidden !important;
+}
+
+.credits-carousel-image {
+  object-fit: contain !important;
+  padding: 0 !important;
+  background: #111111 !important;
+}
+
+/* Fallback también cuadrado */
+.credits-carousel-fallback {
+  min-height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+/* Mobile: mantener portada completa */
+@media (max-width: 900px) {
+  .credits-carousel-cover {
+    aspect-ratio: 1 / 1 !important;
+    min-height: auto !important;
+  }
+
+  .credits-carousel-image {
+    object-fit: contain !important;
+  }
+}
