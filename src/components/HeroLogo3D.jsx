@@ -77,7 +77,7 @@ function LogoModel() {
       />
 
       <Center>
-        <group ref={groupRef} scale={2.25}>
+        <group ref={groupRef} scale={2.75}>
           <primitive object={logoScene} />
         </group>
       </Center>
