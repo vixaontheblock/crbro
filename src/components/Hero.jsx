@@ -1,22 +1,19 @@
 import Link from "next/link";
-import Image from "next/image";
+import HeroLogo3D from "./HeroLogo3D";
 
 export default function Hero() {
   return (
     <section className="hero brand-hero">
+      <div className="hero-ambient" aria-hidden="true" />
+
       <div className="container hero-grid brand-hero-grid">
         <div className="hero-copy brand-hero-copy">
-          <p className="eyebrow">Producer · DJ · Hitmaker · Panama</p>
+          <p className="eyebrow hero-eyebrow">
+            Producer · DJ · Hitmaker · Panama
+          </p>
 
           <div className="hero-logo-block">
-            <Image
-              src="/images/crbro-logo.png"
-              alt="CRBRO Logo"
-              width={420}
-              height={120}
-              className="hero-logo-img"
-              priority
-            />
+            <HeroLogo3D />
           </div>
 
           <p className="hero-lead">
@@ -25,7 +22,7 @@ export default function Hero() {
             collaborations built for global impact.
           </p>
 
-          <div className="btn-row" style={{ marginTop: "34px" }}>
+          <div className="btn-row hero-actions">
             <Link href="/#booking" className="btn btn-primary">
               Book a Session
             </Link>
@@ -39,6 +36,7 @@ export default function Hero() {
         <aside className="hero-panel glass brand-hero-panel">
           <div className="panel-number">
             <strong>1.4B+</strong>
+
             <span>
               Streams
               <br />

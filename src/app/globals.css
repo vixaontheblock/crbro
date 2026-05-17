@@ -3079,3 +3079,303 @@ html {
     border-color: var(--crbro-sepia);
   }
 }
+
+/* ================================
+   HERO — 3D COPPER LOGO
+================================ */
+
+.hero,
+.brand-hero {
+  position: relative !important;
+  min-height: 100vh;
+  overflow: hidden !important;
+  display: flex;
+  align-items: center;
+  padding: calc(168px + env(safe-area-inset-top)) 0 82px;
+  background:
+    radial-gradient(circle at 22% 36%, rgba(196, 122, 61, 0.24), transparent 30%),
+    radial-gradient(circle at 74% 28%, rgba(240, 192, 149, 0.14), transparent 26%),
+    radial-gradient(circle at 72% 78%, rgba(170, 116, 68, 0.12), transparent 32%),
+    linear-gradient(135deg, #111111 0%, #1b130e 48%, #090909 100%) !important;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 24px,
+      rgba(240, 192, 149, 0.026) 24px 25px,
+      transparent 25px 54px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 58px,
+      rgba(196, 122, 61, 0.032) 58px 59px,
+      transparent 59px 118px
+    );
+  opacity: 0.32;
+  mask-image: radial-gradient(circle at 50% 45%, black 0%, black 42%, transparent 86%);
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, black 0%, black 42%, transparent 86%);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -12vw;
+  bottom: -14vw;
+  z-index: 1;
+  width: clamp(430px, 52vw, 920px);
+  aspect-ratio: 1 / 1;
+  background-image: url("/images/crbro-isotype.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.045;
+  filter: brightness(0) invert(1);
+  pointer-events: none;
+}
+
+.hero-ambient {
+  position: absolute;
+  left: 10%;
+  top: 28%;
+  z-index: 1;
+  width: 420px;
+  height: 420px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(196, 122, 61, 0.28), transparent 62%);
+  filter: blur(34px);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.hero-grid,
+.brand-hero-grid {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
+  gap: clamp(34px, 6vw, 84px);
+  align-items: center;
+}
+
+.hero-copy {
+  min-width: 0;
+}
+
+.hero-eyebrow {
+  color: #c47a3d !important;
+  text-shadow: 0 0 24px rgba(196, 122, 61, 0.22);
+}
+
+.hero-logo-block {
+  position: relative;
+  width: min(100%, 720px);
+  margin-top: 22px;
+  margin-bottom: 20px;
+}
+
+.hero-logo-block::before {
+  content: "";
+  position: absolute;
+  inset: 12% 2% 4%;
+  z-index: -1;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(196, 122, 61, 0.32), transparent 58%);
+  filter: blur(28px);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.hero-logo-3d {
+  position: relative;
+  width: 100%;
+  height: clamp(260px, 35vw, 470px);
+  overflow: visible;
+}
+
+.hero-logo-3d canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hero-lead {
+  max-width: 640px;
+  color: rgba(244, 239, 231, 0.82);
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 800;
+  line-height: 1.48;
+}
+
+.hero-actions {
+  margin-top: 34px;
+}
+
+.hero-panel,
+.brand-hero-panel {
+  position: relative;
+  overflow: hidden;
+  align-self: center;
+  border: 1px solid rgba(240, 192, 149, 0.18) !important;
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(196, 122, 61, 0.14), rgba(240, 192, 149, 0.055)),
+    rgba(17, 17, 17, 0.64) !important;
+  box-shadow:
+    0 34px 100px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(244, 239, 231, 0.08);
+  backdrop-filter: blur(24px);
+}
+
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 24px;
+  height: 1px;
+  background: rgba(240, 192, 149, 0.18);
+  pointer-events: none;
+}
+
+.panel-number strong {
+  color: #f0c095 !important;
+  text-shadow: 0 0 30px rgba(196, 122, 61, 0.22);
+}
+
+.panel-number span,
+.mini-stat span {
+  color: #c47a3d !important;
+}
+
+.mini-stat {
+  border: 1px solid rgba(240, 192, 149, 0.13);
+  background:
+    linear-gradient(135deg, rgba(196, 122, 61, 0.10), rgba(240, 192, 149, 0.035));
+}
+
+.mini-stat strong {
+  color: var(--crbro-cream) !important;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .hero,
+  .brand-hero {
+    min-height: auto;
+    display: block;
+    padding: calc(122px + env(safe-area-inset-top)) 0 72px;
+    background:
+      radial-gradient(circle at 32% 22%, rgba(196, 122, 61, 0.24), transparent 34%),
+      radial-gradient(circle at 88% 18%, rgba(240, 192, 149, 0.10), transparent 30%),
+      linear-gradient(180deg, #111111 0%, #1b130e 54%, #090909 100%) !important;
+  }
+
+  .hero-grid,
+  .brand-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    align-items: start;
+  }
+
+  .hero-logo-block {
+    width: 100%;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
+
+  .hero-logo-3d {
+    height: 290px;
+  }
+
+  .hero-lead {
+    max-width: 100%;
+    font-size: 18px;
+    line-height: 1.38;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    margin-top: 30px;
+  }
+
+  .hero-panel,
+  .brand-hero-panel {
+    width: 100%;
+    border-radius: 24px;
+  }
+
+  .hero::after {
+    right: -210px;
+    bottom: 72px;
+    width: 450px;
+    opacity: 0.045;
+  }
+
+  .hero-ambient {
+    left: auto;
+    right: -140px;
+    top: 22%;
+    width: 320px;
+    height: 320px;
+    opacity: 0.62;
+  }
+}
+
+.hero-logo-block {
+  position: relative;
+  width: min(100%, 760px);
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+.hero-logo-block::before {
+  content: "";
+  position: absolute;
+  inset: 6% 8% 10% 8%;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(196, 122, 61, 0.42),
+    rgba(240, 192, 149, 0.18) 32%,
+    transparent 68%
+  );
+  filter: blur(34px);
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.hero-logo-3d {
+  position: relative;
+  width: 100%;
+  height: clamp(340px, 38vw, 520px);
+  overflow: visible;
+}
+
+.hero-logo-3d canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 900px) {
+  .hero-logo-block {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 12px;
+  }
+
+  .hero-logo-3d {
+    height: 320px;
+  }
+}

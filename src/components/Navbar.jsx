@@ -160,10 +160,6 @@ export default function Navbar() {
               <p className="eyebrow">Navigation</p>
               <strong>CRBRO</strong>
             </div>
-
-            <button type="button" onClick={closeMenu}>
-              Close
-            </button>
           </div>
 
           <div className="mobile-menu-links">
