@@ -5,6 +5,8 @@ import { useEffect, useRef } from "react";
 export default function ExperienceLayer() {
   const progressRef = useRef(null);
   const glowRef = useRef(null);
+  const glowRafRef = useRef(null);
+  const mousePos = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const updateProgress = () => {
@@ -17,13 +19,20 @@ export default function ExperienceLayer() {
       }
     };
 
-    const moveGlow = (event) => {
-      if (!glowRef.current) return;
+    const moveGlow = (e) => {
+      mousePos.current = { x: e.clientX, y: e.clientY };
 
-      glowRef.current.style.transform = `translate(${event.clientX}px, ${event.clientY}px)`;
+      if (glowRafRef.current) return; // ya hay un frame pendiente
+
+      glowRafRef.current = requestAnimationFrame(() => {
+        if (glowRef.current) {
+          glowRef.current.style.transform = `translate(${mousePos.current.x}px, ${mousePos.current.y}px)`;
+        }
+        glowRafRef.current = null;
+      });
     };
 
-    window.addEventListener("scroll", updateProgress);
+    window.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("mousemove", moveGlow);
 
     updateProgress();
@@ -31,6 +40,7 @@ export default function ExperienceLayer() {
     return () => {
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("mousemove", moveGlow);
+      if (glowRafRef.current) cancelAnimationFrame(glowRafRef.current);
     };
   }, []);
 

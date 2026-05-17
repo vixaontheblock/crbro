@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 export default function Footer() {
+  const year = new Date().getFullYear();
+
   return (
     <footer id="contact" className="footer brand-footer">
       <img
@@ -25,9 +27,7 @@ export default function Footer() {
             className="footer-logo-img"
           />
 
-          <h2 className="footer-title">
-            Built for impact.
-          </h2>
+          <h2 className="footer-title">Built for impact.</h2>
         </div>
 
         <div className="footer-links">
@@ -39,18 +39,20 @@ export default function Footer() {
         </div>
 
         <div className="footer-links">
-          <a href="https://instagram.com/crbro_" target="_blank">
+          <a
+            href="https://instagram.com/crbro_"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Instagram
           </a>
 
-          <a href="mailto:crbrobooking@gmail.com">
-            Email
-          </a>
+          <a href="mailto:crbrobooking@gmail.com">Email</a>
         </div>
       </div>
 
       <div className="container footer-bottom">
-        <p>© 2026 CRBRO</p>
+        <p>© {year} CRBRO</p>
         <p>Designed by Rupta Studios</p>
       </div>
     </footer>

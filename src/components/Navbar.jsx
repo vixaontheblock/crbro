@@ -13,14 +13,47 @@ const links = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeHref, setActiveHref] = useState("");
 
+  // Lock scroll when menu open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [menuOpen]);
+
+  // Close on Escape
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Active section tracking
+  useEffect(() => {
+    const sectionIds = links
+      .map((l) => l.href.replace("/#", ""))
+      .filter(Boolean);
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveHref(`/#${entry.target.id}`);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   function closeMenu() {
     setMenuOpen(false);
@@ -40,7 +73,11 @@ export default function Navbar() {
 
           <div className="brand-nav-links">
             {links.map((link) => (
-              <Link key={link.href} href={link.href}>
+              <Link
+                key={link.href}
+                href={link.href}
+                className={activeHref === link.href ? "is-active" : ""}
+              >
                 {link.label}
               </Link>
             ))}
@@ -72,7 +109,12 @@ export default function Navbar() {
 
           <div className="mobile-menu-links">
             {links.map((link, index) => (
-              <Link key={link.href} href={link.href} onClick={closeMenu}>
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={closeMenu}
+                className={activeHref === link.href ? "is-active" : ""}
+              >
                 <span>0{index + 1}</span>
                 {link.label}
               </Link>
@@ -80,13 +122,15 @@ export default function Navbar() {
           </div>
 
           <div className="mobile-menu-footer">
-            <a href="https://instagram.com/crbro_" target="_blank">
+            <a
+              href="https://instagram.com/crbro_"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Instagram
             </a>
 
-            <a href="mailto:crbrobooking@gmail.com">
-              Email
-            </a>
+            <a href="mailto:crbrobooking@gmail.com">Email</a>
           </div>
         </div>
       </div>

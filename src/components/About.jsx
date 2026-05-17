@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function About() {
   return (
     <section id="about" className="section">
@@ -6,19 +8,23 @@ export default function About() {
           <p className="eyebrow">About</p>
 
           <h2 className="title">
-            Built from Panama. Heard worldwide.
+            Built from Panama.
+            <br />
+            Heard worldwide.
           </h2>
         </div>
 
         <div className="editorial-card glass">
           <p className="body">
-            CRBRO is a Panamanian producer and DJ shaping the sound of Latin
-            music through rhythm, atmosphere and high-level collaborations.
+            CRBRO is a Panamanian producer and DJ behind some of Latin musics
+            most impactful records — working with artists like Sech, J Balvin,
+            Rosalía, Farruko and Wisin &amp; Yandel across 1.4B+ combined streams.
           </p>
 
           <p className="body" style={{ marginTop: "22px" }}>
-            From studio sessions to global records, the focus is simple: create
-            sound that feels cinematic, memorable and built for impact.
+            The focus has always been the same: create sound that feels
+            cinematic, memorable and built for global impact. Not a genre — a
+            standard.
           </p>
 
           <div className="capabilities">
@@ -41,6 +47,12 @@ export default function About() {
               <strong>Creative Direction</strong>
               <span>Artist Sound</span>
             </div>
+          </div>
+
+          <div style={{ marginTop: "32px" }}>
+            <Link href="/#booking" className="btn btn-primary">
+              Start a Project
+            </Link>
           </div>
         </div>
       </div>

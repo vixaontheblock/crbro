@@ -7,57 +7,49 @@ export default function Credits() {
   const audioRef = useRef(null);
   const railRef = useRef(null);
   const playingIdRef = useRef(null);
+  const hasInteracted = useRef(false);
 
   const [tracks, setTracks] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [playingId, setPlayingId] = useState(null);
   const [progress, setProgress] = useState(0);
+  const [showHint, setShowHint] = useState(true);
 
-  const activeTrack = useMemo(() => {
-    return tracks[activeIndex] || null;
-  }, [tracks, activeIndex]);
+  const activeTrack = useMemo(() => tracks[activeIndex] || null, [tracks, activeIndex]);
 
+  // Load tracks
   useEffect(() => {
     let cancelled = false;
-
     async function loadTracks() {
       try {
-        const response = await fetch("/api/music/credits");
-        const data = await response.json();
-
-        if (!cancelled && Array.isArray(data.tracks)) {
-          setTracks(data.tracks);
-        }
-      } catch (error) {
-        console.error("Credits load error:", error);
+        const res = await fetch("/api/music/credits");
+        const data = await res.json();
+        if (!cancelled && Array.isArray(data.tracks)) setTracks(data.tracks);
+      } catch (err) {
+        console.error("Credits load error:", err);
       }
     }
-
     loadTracks();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
+  // Audio setup
   useEffect(() => {
     const audio = new Audio();
     audioRef.current = audio;
 
-    function updateProgress() {
+    const updateProgress = () => {
       if (!audio.duration) return;
       setProgress((audio.currentTime / audio.duration) * 100);
-    }
-
-    function handleEnded() {
+    };
+    const handleEnded = () => {
       playingIdRef.current = null;
       setPlayingId(null);
       setProgress(0);
-    }
+    };
 
     audio.addEventListener("timeupdate", updateProgress);
     audio.addEventListener("ended", handleEnded);
-
     return () => {
       audio.pause();
       audio.removeEventListener("timeupdate", updateProgress);
@@ -65,14 +57,36 @@ export default function Credits() {
     };
   }, []);
 
+  // Scroll active card into view when activeIndex changes programmatically
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail || tracks.length === 0) return;
+    const card = rail.querySelector(`[data-credit-index="${activeIndex}"]`);
+    if (!card) return;
+    const railCenter = rail.clientWidth / 2;
+    const cardCenter = card.offsetLeft + card.clientWidth / 2;
+    rail.scrollTo({ left: cardCenter - railCenter, behavior: "smooth" });
+  }, [activeIndex, tracks]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (!tracks.length) return;
+      if (e.key === "ArrowRight") {
+        setActiveIndex(i => Math.min(i + 1, tracks.length - 1));
+        stopPreview();
+      } else if (e.key === "ArrowLeft") {
+        setActiveIndex(i => Math.max(i - 1, 0));
+        stopPreview();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [tracks]);
+
   function stopPreview() {
     const audio = audioRef.current;
-
-    if (audio) {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-
+    if (audio) { audio.pause(); audio.currentTime = 0; }
     playingIdRef.current = null;
     setPlayingId(null);
     setProgress(0);
@@ -80,8 +94,13 @@ export default function Credits() {
 
   function handleRailScroll() {
     const rail = railRef.current;
-
     if (!rail || tracks.length === 0) return;
+
+    // Hide hint on first interaction
+    if (!hasInteracted.current) {
+      hasInteracted.current = true;
+      setShowHint(false);
+    }
 
     const cards = Array.from(rail.querySelectorAll("[data-credit-index]"));
     const railCenter = rail.scrollLeft + rail.clientWidth / 2;
@@ -93,7 +112,6 @@ export default function Credits() {
       const index = Number(card.dataset.creditIndex);
       const cardCenter = card.offsetLeft + card.clientWidth / 2;
       const distance = Math.abs(cardCenter - railCenter);
-
       if (distance < closestDistance) {
         closestDistance = distance;
         closestIndex = index;
@@ -108,36 +126,31 @@ export default function Credits() {
 
   function handleWheel(event) {
     const rail = railRef.current;
-
     if (!rail) return;
+    if (window.innerWidth <= 900) return;
 
-    const isMobile = window.innerWidth <= 900;
-    if (isMobile) return;
-
-    const delta =
-      Math.abs(event.deltaX) > Math.abs(event.deltaY)
-        ? event.deltaX
-        : event.deltaY;
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
+      ? event.deltaX : event.deltaY;
 
     const maxScroll = rail.scrollWidth - rail.clientWidth;
     const atStart = rail.scrollLeft <= 2;
     const atEnd = rail.scrollLeft >= maxScroll - 2;
-
-    if ((delta < 0 && atStart) || (delta > 0 && atEnd)) {
-      return;
-    }
+    if ((delta < 0 && atStart) || (delta > 0 && atEnd)) return;
 
     event.preventDefault();
-
-    rail.scrollBy({
-      left: delta,
-      behavior: "auto",
-    });
+    rail.scrollBy({ left: delta, behavior: "auto" });
   }
 
-  async function togglePreview(track) {
-    if (!track?.previewUrl || !audioRef.current) return;
+  // Click card to activate it
+  function handleCardClick(index) {
+    if (index === activeIndex) return;
+    stopPreview();
+    setActiveIndex(index);
+  }
 
+  async function togglePreview(track, e) {
+    e.stopPropagation(); // don't trigger card click
+    if (!track?.previewUrl || !audioRef.current) return;
     const audio = audioRef.current;
 
     if (playingIdRef.current === track.id) {
@@ -150,14 +163,13 @@ export default function Credits() {
     audio.pause();
     audio.currentTime = 0;
     audio.src = track.previewUrl;
-
     try {
       await audio.play();
       playingIdRef.current = track.id;
       setPlayingId(track.id);
       setProgress(0);
-    } catch (error) {
-      console.error("Preview play error:", error);
+    } catch (err) {
+      console.error("Preview play error:", err);
       playingIdRef.current = null;
       setPlayingId(null);
     }
@@ -169,14 +181,10 @@ export default function Credits() {
         <div className="credits-carousel-head">
           <div>
             <p className="eyebrow">Selected Credits</p>
-
-            <h2 className="title credits-carousel-title">
-              Records in motion.
-            </h2>
+            <h2 className="title credits-carousel-title">Records in motion.</h2>
           </div>
-
           <p className="body credits-carousel-body">
-            Selected records connected to CRBRO’s production, sound and creative
+            Selected records connected to CRBRO&apos;s production, sound and creative
             direction. Scroll through the credits and play previews.
           </p>
         </div>
@@ -187,9 +195,7 @@ export default function Credits() {
               {String(activeIndex + 1).padStart(2, "0")} /{" "}
               {String(tracks.length).padStart(2, "0")}
             </span>
-
             <strong>{activeTrack.trackName || activeTrack.title}</strong>
-
             <p>{activeTrack.artistName}</p>
           </div>
         )}
@@ -204,9 +210,9 @@ export default function Credits() {
               <article
                 key={track.id}
                 data-credit-index={index}
-                className={`credits-carousel-card ${
-                  index === activeIndex ? "is-active" : ""
-                }`}
+                className={`credits-carousel-card ${index === activeIndex ? "is-active" : ""}`}
+                onClick={() => handleCardClick(index)}
+                style={{ cursor: index !== activeIndex ? "pointer" : "default" }}
               >
                 <div className="credits-carousel-cover">
                   {track.artwork ? (
@@ -237,9 +243,7 @@ export default function Credits() {
                   <div>
                     <div className="credits-carousel-meta">
                       <span>{track.albumName || "Selected Credit"}</span>
-                      <span>
-                        {playingId === track.id ? "Playing" : "Preview"}
-                      </span>
+                      <span>{playingId === track.id ? "Playing" : "Preview"}</span>
                     </div>
 
                     <div className="credits-carousel-progress">
@@ -254,17 +258,13 @@ export default function Credits() {
                       <button
                         type="button"
                         disabled={!track.previewUrl}
-                        onClick={() => togglePreview(track)}
+                        onClick={(e) => togglePreview(track, e)}
                       >
                         {playingId === track.id ? "Pause" : "Play"}
                       </button>
-
                       {track.storeUrl && (
-                        <a
-                          href={track.storeUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a href={track.storeUrl} target="_blank" rel="noreferrer"
+                          onClick={(e) => e.stopPropagation()}>
                           Open
                         </a>
                       )}
@@ -277,15 +277,23 @@ export default function Credits() {
         </div>
 
         <div className="credits-carousel-footer">
-          <span>Scroll / swipe</span>
+          <span
+            className="credits-scroll-hint"
+            style={{
+              opacity: showHint ? 1 : 0,
+              transition: "opacity 0.5s ease",
+              pointerEvents: "none",
+            }}
+          >
+            Scroll / swipe
+          </span>
 
           <div className="credits-carousel-bar">
             <i
               style={{
-                width:
-                  tracks.length > 0
-                    ? `${((activeIndex + 1) / tracks.length) * 100}%`
-                    : "0%",
+                width: tracks.length > 0
+                  ? `${((activeIndex + 1) / tracks.length) * 100}%`
+                  : "0%",
               }}
             />
           </div>

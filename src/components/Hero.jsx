@@ -1,32 +1,37 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Hero() {
   return (
     <section className="hero brand-hero">
       <div className="container hero-grid brand-hero-grid">
         <div className="hero-copy brand-hero-copy">
-          <p className="eyebrow">Producer · DJ · Hitmaker</p>
+          <p className="eyebrow">Producer · DJ · Hitmaker · Panama</p>
 
           <div className="hero-logo-block">
-            <img
+            <Image
               src="/images/crbro-logo.png"
               alt="CRBRO Logo"
+              width={420}
+              height={120}
               className="hero-logo-img"
+              priority
             />
           </div>
 
           <p className="hero-lead">
-            Panama-born sound architect shaping Latin music through rhythm,
-            atmosphere and records built for global impact.
+            The sound behind the records. Panama-born producer and DJ shaping
+            Latin music through rhythm, atmosphere and multi-platinum
+            collaborations built for global impact.
           </p>
 
           <div className="btn-row" style={{ marginTop: "34px" }}>
-            <Link href="/#credits" className="btn btn-primary">
-              View Credits
+            <Link href="/#booking" className="btn btn-primary">
+              Book a Session
             </Link>
 
-            <Link href="/#booking" className="btn btn-secondary">
-              Booking
+            <Link href="/#credits" className="btn btn-secondary">
+              View Credits
             </Link>
           </div>
         </div>
@@ -42,8 +47,8 @@ export default function Hero() {
           </div>
 
           <p>
-            Official landing experience for selected credits, live previews,
-            bookings, sessions and creative direction.
+            Selected credits, live previews, bookings, sessions and creative
+            direction — all in one place.
           </p>
 
           <div className="mini-stats">
@@ -55,6 +60,11 @@ export default function Hero() {
             <div className="mini-stat">
               <strong>PA</strong>
               <span>Global</span>
+            </div>
+
+            <div className="mini-stat">
+              <strong>BMI</strong>
+              <span>Recognized</span>
             </div>
           </div>
         </aside>

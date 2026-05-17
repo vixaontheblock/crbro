@@ -17,11 +17,11 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Marquee />
+      <Recognition />
       <About />
+      <Credits />
       <WorkModes />
       <SoundPacks />
-      <Credits />
-      <Recognition />
       <Booking />
       <Footer />
     </main>
