@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const links = [
   { label: "About", href: "/#about" },
@@ -14,59 +15,99 @@ const links = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("");
-
-  // Lock scroll when menu open
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [menuOpen]);
-
-  // Close on Escape
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.key === "Escape") setMenuOpen(false);
-    }
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
-  // Active section tracking
-  useEffect(() => {
-    const sectionIds = links
-      .map((l) => l.href.replace("/#", ""))
-      .filter(Boolean);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveHref(`/#${entry.target.id}`);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-
-    sectionIds.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const [scrolled, setScrolled] = useState(false);
 
   function closeMenu() {
     setMenuOpen(false);
   }
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === "Escape") closeMenu();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrolled(window.scrollY > 18);
+    }
+
+    handleScroll();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    const sectionIds = links.map((link) => link.href.replace("/#", ""));
+
+    function setActiveFromHash() {
+      if (window.location.hash) {
+        setActiveHref(`/${window.location.hash}`);
+      }
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+        if (visible[0]?.target?.id) {
+          setActiveHref(`/#${visible[0].target.id}`);
+        }
+      },
+      {
+        root: null,
+        threshold: [0.18, 0.28, 0.42],
+        rootMargin: "-24% 0px -58% 0px",
+      }
+    );
+
+    sectionIds.forEach((id) => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
+
+    setActiveFromHash();
+    window.addEventListener("hashchange", setActiveFromHash);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("hashchange", setActiveFromHash);
+    };
+  }, []);
+
   return (
     <>
-      <header className="brand-nav-wrap">
-        <nav className="brand-nav">
+      <header
+        className={`brand-nav-wrap ${scrolled ? "is-scrolled" : ""}`}
+      >
+        <nav className="brand-nav" aria-label="Main navigation">
           <Link href="/" className="brand-logo-wrap" onClick={closeMenu}>
-            <img
+            <Image
               src="/images/crbro-logo.png"
               alt="CRBRO"
+              width={220}
+              height={90}
+              priority
               className="brand-logo-img"
             />
           </Link>
@@ -83,15 +124,20 @@ export default function Navbar() {
             ))}
           </div>
 
-          <Link href="/#booking" className="brand-book-link desktop-book">
+          <Link
+            href="/#booking"
+            className="brand-book-link desktop-book"
+            onClick={closeMenu}
+          >
             Book
           </Link>
 
           <button
             type="button"
             className={`mobile-menu-button ${menuOpen ? "is-open" : ""}`}
-            aria-label="Toggle navigation menu"
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
             onClick={() => setMenuOpen((current) => !current)}
           >
             <span />
@@ -100,11 +146,24 @@ export default function Navbar() {
         </nav>
       </header>
 
-      <div className={`mobile-menu-panel ${menuOpen ? "is-open" : ""}`}>
-        <div className="mobile-menu-inner">
+      <div
+        id="mobile-menu"
+        className={`mobile-menu-panel ${menuOpen ? "is-open" : ""}`}
+        onClick={closeMenu}
+      >
+        <div
+          className="mobile-menu-inner"
+          onClick={(event) => event.stopPropagation()}
+        >
           <div className="mobile-menu-head">
-            <p className="eyebrow">Navigation</p>
-            <span>CRBRO</span>
+            <div>
+              <p className="eyebrow">Navigation</p>
+              <strong>CRBRO</strong>
+            </div>
+
+            <button type="button" onClick={closeMenu}>
+              Close
+            </button>
           </div>
 
           <div className="mobile-menu-links">
@@ -115,7 +174,7 @@ export default function Navbar() {
                 onClick={closeMenu}
                 className={activeHref === link.href ? "is-active" : ""}
               >
-                <span>0{index + 1}</span>
+                <span>{String(index + 1).padStart(2, "0")}</span>
                 {link.label}
               </Link>
             ))}
@@ -131,6 +190,10 @@ export default function Navbar() {
             </a>
 
             <a href="mailto:crbrobooking@gmail.com">Email</a>
+
+            <Link href="/#booking" onClick={closeMenu}>
+              Book CRBRO
+            </Link>
           </div>
         </div>
       </div>
