@@ -3412,3 +3412,62 @@ html {
     height: 280px;
   }
 }
+
+
+/* ================================
+   HERO 3D LOGO — CENTERED FIX
+================================ */
+
+.hero-logo-block {
+  position: relative;
+  width: min(100%, 680px);
+  margin-top: 18px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-logo-block::before {
+  content: "";
+  position: absolute;
+  inset: 16% 12% 12%;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(196, 122, 61, 0.28),
+    rgba(240, 192, 149, 0.12) 34%,
+    transparent 68%
+  );
+  filter: blur(32px);
+  opacity: 0.78;
+  pointer-events: none;
+}
+
+.hero-logo-3d-shell {
+  position: relative;
+  width: min(100%, 620px);
+  height: clamp(260px, 30vw, 390px);
+  overflow: visible;
+}
+
+.hero-logo-3d-shell canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 900px) {
+  .hero-logo-block {
+    width: 100%;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    justify-content: center;
+  }
+
+  .hero-logo-3d-shell {
+    width: min(100%, 430px);
+    height: 285px;
+  }
+}
