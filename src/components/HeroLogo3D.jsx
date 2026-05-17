@@ -40,9 +40,9 @@ function LogoModel() {
 
     if (groupRef.current) {
       // movimiento suave de lado a lado, sin 360
-      groupRef.current.rotation.y = Math.sin(t * 0.8) * 0.13;
-      groupRef.current.rotation.x = Math.sin(t * 0.45) * 0.025;
-      groupRef.current.position.y = Math.sin(t * 1.05) * 0.025;
+      groupRef.current.rotation.y = Math.sin(t * 1.25) * 0.13;
+      groupRef.current.rotation.x = Math.sin(t * 0.75) * 0.025;
+      groupRef.current.position.y = Math.sin(t * 1.55) * 0.025;
     }
 
     if (warmLightRef.current) {
@@ -77,7 +77,7 @@ function LogoModel() {
       />
 
       <Center>
-        <group ref={groupRef} scale={3.75}>
+        <group ref={groupRef} scale={4.50}>
           <primitive object={logoScene} />
         </group>
       </Center>
