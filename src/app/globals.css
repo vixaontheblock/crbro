@@ -3379,3 +3379,36 @@ html {
     height: 320px;
   }
 }
+
+.hero-logo-block {
+  margin-top: 18px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.hero-logo-3d-shell {
+  width: min(100%, 560px);
+  height: clamp(240px, 26vw, 340px);
+  position: relative;
+}
+
+.hero-logo-3d-shell canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .hero-logo-block {
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+
+  .hero-logo-3d-shell {
+    width: min(100%, 440px);
+    height: 280px;
+  }
+}
