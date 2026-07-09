@@ -159,33 +159,15 @@ button {
   line-height: 1.7;
 }
 
-/* Kicker — insignia flotante, ya NO es un subtítulo pegado al título.
-   Vive como una etiqueta de contexto independiente. */
+/* Kicker — etiqueta de sección minimalista.
+   Texto limpio, sin cápsula ni punto, para un acabado editorial. */
 .kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  padding: 9px 18px 9px 14px;
+  display: inline-block;
   color: var(--crbro-sand);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 950;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-}
-
-.kicker::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--crbro-orange);
-  box-shadow: 0 0 12px rgba(222, 123, 71, 0.7);
 }
 
 .section-intro {
@@ -328,6 +310,7 @@ button {
 }
 
 .brand-nav {
+  position: relative;
   pointer-events: auto;
   width: min(100% - 40px, 1240px);
   margin-inline: auto;
@@ -338,22 +321,62 @@ button {
   gap: 24px;
   border: 1px solid var(--glass-border);
   border-radius: 999px;
-  background: rgba(17, 17, 17, 0.62);
+  background:
+    linear-gradient(
+      155deg,
+      rgba(240, 192, 149, 0.08),
+      rgba(170, 116, 68, 0.03) 45%,
+      rgba(17, 17, 17, 0.42)
+    ),
+    rgba(17, 17, 17, 0.5);
   color: var(--crbro-offwhite);
   padding: 12px clamp(20px, 3vw, 40px);
-  backdrop-filter: blur(22px) saturate(150%);
-  -webkit-backdrop-filter: blur(22px) saturate(150%);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(26px) saturate(160%);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition:
     background 0.3s ease,
     box-shadow 0.3s ease,
-    border-color 0.3s ease;
+    border-color 0.3s ease,
+    backdrop-filter 0.3s ease;
+}
+
+/* Reflejo superior de vidrio */
+.brand-nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    150deg,
+    rgba(240, 192, 149, 0.4),
+    rgba(240, 192, 149, 0) 42%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
 }
 
 .brand-nav-wrap.is-scrolled .brand-nav {
-  background: rgba(17, 17, 17, 0.86);
+  background:
+    linear-gradient(
+      155deg,
+      rgba(240, 192, 149, 0.1),
+      rgba(170, 116, 68, 0.04) 45%,
+      rgba(17, 17, 17, 0.62)
+    ),
+    rgba(17, 17, 17, 0.68);
   border-color: var(--border-strong);
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.44);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .brand-logo-wrap {
@@ -1257,9 +1280,6 @@ button {
 
 .credits-section .kicker {
   color: var(--crbro-brown);
-  background: rgba(112, 66, 20, 0.06);
-  border-color: rgba(47, 23, 14, 0.16);
-  box-shadow: none;
 }
 
 .credits-section .body,
@@ -1326,6 +1346,7 @@ button {
 .credits-carousel-card {
   flex: 0 0 min(76vw, 720px);
   scroll-snap-align: center;
+  scroll-snap-stop: always;
   display: grid;
   grid-template-columns: 0.9fr 1fr;
   border: 1px solid rgba(47, 23, 14, 0.12);
@@ -1750,7 +1771,45 @@ textarea.field {
 }
 
 .footer-cta-card {
-  padding: 26px;
+  position: relative;
+  padding: 30px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  background: linear-gradient(
+    155deg,
+    rgba(240, 192, 149, 0.12),
+    rgba(170, 116, 68, 0.05) 45%,
+    rgba(17, 17, 17, 0.4)
+  );
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.footer-cta-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    150deg,
+    rgba(240, 192, 149, 0.45),
+    rgba(240, 192, 149, 0) 45%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.footer-cta-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .footer-cta-card > span {
