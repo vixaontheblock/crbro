@@ -156,21 +156,17 @@ export default function Navbar() {
           onClick={(event) => event.stopPropagation()}
         >
           <div className="mobile-menu-head">
-            <div>
-              <p className="eyebrow">Navigation</p>
-              <strong>CRBRO</strong>
-            </div>
+            <span className="kicker">Navigation</span>
           </div>
 
           <div className="mobile-menu-links">
-            {links.map((link, index) => (
+            {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={closeMenu}
                 className={activeHref === link.href ? "is-active" : ""}
               >
-                <span>{String(index + 1).padStart(2, "0")}</span>
                 {link.label}
               </Link>
             ))}
