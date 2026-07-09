@@ -55,25 +55,26 @@ export default function SoundPacks() {
       <section id="sound-packs" className="sound-packs-section crbro-packs">
         <div className="container">
           <div className="section-head">
-            <div>
-              <p className="eyebrow">Sound Packs</p>
+            <div className="section-intro">
+              <span className="kicker">Sound Packs</span>
 
               <h2 className="title">
                 Sounds made for producers, artists and sessions.
               </h2>
             </div>
 
-            <p className="body crbro-packs-intro">
-              Exclusive CRBRO-inspired kits, samples and beat packs. Preview the
-              experience before requesting access.
-            </p>
+            <div className="section-head-aside">
+              <p className="body crbro-packs-intro">
+                Exclusive CRBRO-inspired kits, samples and beat packs. Preview the
+                experience before requesting access.
+              </p>
+            </div>
           </div>
 
           <div className="crbro-packs-grid">
-            {packs.map((pack, index) => (
+            {packs.map((pack) => (
               <article className="crbro-pack-card" key={pack.id}>
                 <div className="crbro-pack-card-top">
-                  <span>0{index + 1}</span>
                   <span>{pack.tag}</span>
                 </div>
 
@@ -126,7 +127,7 @@ export default function SoundPacks() {
             </button>
 
             <div className="pack-modal-head">
-              <p className="eyebrow">Pack Preview</p>
+              <span className="kicker">Pack Preview</span>
 
               <h2>{selectedPack.title}</h2>
 
