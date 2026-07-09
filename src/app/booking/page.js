@@ -1,51 +1,36 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 export default function BookingPage() {
   return (
-    <main className="min-h-screen bg-black px-6 py-32 text-white">
+    <main className="site-main">
+      <Navbar />
 
-      <div className="mx-auto max-w-5xl">
-
-        <p className="text-xs tracking-[0.4em] text-neutral-500">
-          BOOKING
-        </p>
-
-        <h1 className="mt-6 text-6xl font-black leading-none md:text-8xl">
-          WORK WITH CRBRO.
-        </h1>
-
-        <form className="mt-20 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8">
-
-          <div className="grid gap-5">
-
-            <input
-              type="text"
-              placeholder="Name"
-              className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-4 outline-none"
-            />
-
-            <input
-              type="email"
-              placeholder="Email"
-              className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-4 outline-none"
-            />
-
-            <textarea
-              rows="6"
-              placeholder="Tell us about the project"
-              className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] px-5 py-4 outline-none"
-            />
-
-            <button
-              className="rounded-full bg-white px-8 py-4 text-sm font-black text-black"
-            >
-              SEND REQUEST
-            </button>
-
+      <section className="section" style={{ paddingTop: "180px" }}>
+        <div className="container">
+          <div className="section-intro">
+            <span className="kicker">Booking</span>
+            <h1 className="title">Work with CRBRO.</h1>
           </div>
 
-        </form>
+          <form className="booking-card glass" style={{ marginTop: "56px", maxWidth: "620px" }}>
+            <div className="form-grid">
+              <input className="field" type="text" placeholder="Name" />
+              <input className="field" type="email" placeholder="Email" />
+              <textarea
+                className="field"
+                rows="6"
+                placeholder="Tell us about the project"
+              />
+              <button className="btn btn-primary" type="submit">
+                Send Request
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
 
-      </div>
-
+      <Footer />
     </main>
   );
 }
