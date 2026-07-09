@@ -179,8 +179,8 @@ export default function Credits() {
     <section id="credits" className="credits-section credits-carousel-section">
       <div className="container">
         <div className="credits-carousel-head">
-          <div>
-            <p className="eyebrow">Selected Credits</p>
+          <div className="section-intro">
+            <span className="kicker">Selected Credits</span>
             <h2 className="title credits-carousel-title">Records in motion.</h2>
           </div>
           <p className="body credits-carousel-body">
