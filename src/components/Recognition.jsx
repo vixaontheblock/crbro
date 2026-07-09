@@ -21,8 +21,8 @@ export default function Recognition() {
   return (
     <section className="recognition-section">
       <div className="container recognition-grid">
-        <div>
-          <p className="eyebrow">Recognition</p>
+        <div className="section-intro">
+          <span className="kicker">Recognition</span>
 
           <h2 className="title">
             The sound behind the movement.
@@ -34,9 +34,9 @@ export default function Recognition() {
           </p>
         </div>
 
-        <div className="recognition-cards">
+        <div className="stat-bar glass">
           {recognitions.map((item) => (
-            <div className="recognition-card" key={item.label}>
+            <div className="stat-item" key={item.label}>
               <strong>{item.value}</strong>
               <span>{item.label}</span>
             </div>
