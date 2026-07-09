@@ -1,44 +1,56 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
+const tracks = [
+  "RELACIÓN REMIX",
+  "LA LUZ",
+  "GIRL LIKE YOU",
+  "911 REMIX",
+  "SAL Y PERREA",
+  "LLUEVE",
+];
+
 export default function CreditsPage() {
   return (
-    <main className="min-h-screen bg-white px-6 py-32 text-black">
-      <div className="mx-auto max-w-7xl">
+    <main className="site-main">
+      <Navbar />
 
-        <p className="text-xs tracking-[0.4em] text-neutral-500">
-          CREDITS
-        </p>
+      <section className="credits-section" style={{ paddingTop: "180px" }}>
+        <div className="container">
+          <div className="section-intro">
+            <span className="kicker">Credits</span>
+            <h1 className="title">Selected works.</h1>
+          </div>
 
-        <h1 className="mt-6 text-6xl font-black leading-none md:text-8xl">
-          SELECTED WORKS.
-        </h1>
+          <div className="work-grid" style={{ marginTop: "56px", gridTemplateColumns: "repeat(3, 1fr)" }}>
+            {tracks.map((track) => (
+              <div
+                key={track}
+                className="glass"
+                style={{ padding: "28px", borderRadius: "20px" }}
+              >
+                <h3
+                  style={{
+                    fontFamily: '"Gobold","Anton","Impact","Arial Narrow",sans-serif',
+                    fontSize: "28px",
+                    fontWeight: 950,
+                    textTransform: "uppercase",
+                    color: "var(--crbro-black)",
+                  }}
+                >
+                  {track}
+                </h3>
 
-        <div className="mt-20 grid gap-4 md:grid-cols-3">
-
-          {[
-            "RELACIÓN REMIX",
-            "LA LUZ",
-            "GIRL LIKE YOU",
-            "911 REMIX",
-            "SAL Y PERREA",
-            "LLUEVE",
-          ].map((track) => (
-
-            <div
-              key={track}
-              className="rounded-[2rem] border border-black/10 bg-neutral-100 p-6"
-            >
-              <h3 className="text-3xl font-black">
-                {track}
-              </h3>
-
-              <p className="mt-4 text-neutral-500">
-                Production Credit
-              </p>
-            </div>
-
-          ))}
-
+                <p style={{ marginTop: "14px", color: "rgba(17,17,17,0.55)" }}>
+                  Production Credit
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
+
+      <Footer />
     </main>
   );
 }
