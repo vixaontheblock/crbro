@@ -1,37 +1,52 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 export default function ContactPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+    <main className="site-main">
+      <Navbar />
 
-      <div className="text-center">
+      <section
+        className="section"
+        style={{
+          paddingTop: "200px",
+          minHeight: "80vh",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <div className="container" style={{ textAlign: "center" }}>
+          <span className="kicker">Contact</span>
 
-        <p className="text-xs tracking-[0.4em] text-neutral-500">
-          CONTACT
-        </p>
+          <h1 className="title" style={{ marginTop: "26px" }}>
+            Let&apos;s talk.
+          </h1>
 
-        <h1 className="mt-6 text-6xl font-black md:text-8xl">
-          LET’S TALK.
-        </h1>
-
-        <div className="mt-12 space-y-4">
-
-          <a
-            href="mailto:crbrobooking@gmail.com"
-            className="block text-xl text-neutral-300"
+          <div
+            style={{
+              marginTop: "34px",
+              display: "grid",
+              gap: "12px",
+              justifyItems: "center",
+            }}
           >
-            crbrobooking@gmail.com
-          </a>
+            <a className="body" href="mailto:crbrobooking@gmail.com">
+              crbrobooking@gmail.com
+            </a>
 
-          <a
-            href="https://instagram.com/crbro_"
-            className="block text-xl text-neutral-300"
-          >
-            @crbro_
-          </a>
-
+            <a
+              className="body"
+              href="https://instagram.com/crbro_"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @crbro_
+            </a>
+          </div>
         </div>
+      </section>
 
-      </div>
-
+      <Footer />
     </main>
   );
 }
