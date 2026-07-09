@@ -8,9 +8,7 @@ export default function Hero() {
 
       <div className="container hero-grid brand-hero-grid">
         <div className="hero-copy brand-hero-copy">
-          <p className="eyebrow hero-eyebrow">
-            Producer · DJ · Hitmaker · Panama
-          </p>
+          <span className="kicker">Producer · DJ · Hitmaker · Panama</span>
 
           <div className="hero-logo-block">
             <HeroLogo3D />
