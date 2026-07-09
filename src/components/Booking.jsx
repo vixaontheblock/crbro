@@ -33,8 +33,8 @@ export default function Booking() {
   return (
     <section id="booking" className="section">
       <div className="container booking-grid">
-        <div>
-          <p className="eyebrow">Booking</p>
+        <div className="section-intro">
+          <span className="kicker">Booking</span>
 
           <h2 className="title">Let&apos;s create something iconic.</h2>
 
@@ -43,7 +43,7 @@ export default function Booking() {
             official inquiries.
           </p>
 
-          <div style={{ marginTop: "34px", display: "grid", gap: "12px" }}>
+          <div className="booking-links">
             <a className="body" href="mailto:crbrobooking@gmail.com">
               crbrobooking@gmail.com
             </a>
