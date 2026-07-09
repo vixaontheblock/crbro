@@ -1,20 +1,25 @@
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-black px-6 py-32 text-white">
-      <div className="mx-auto max-w-7xl">
-        <p className="text-xs tracking-[0.4em] text-neutral-500">
-          ABOUT
-        </p>
+    <main className="site-main">
+      <Navbar />
 
-        <h1 className="mt-6 text-6xl font-black leading-none md:text-8xl">
-          CRBRO.
-        </h1>
+      <section className="section" style={{ paddingTop: "180px" }}>
+        <div className="container section-intro">
+          <span className="kicker">About</span>
 
-        <p className="mt-10 max-w-3xl text-lg leading-relaxed text-neutral-300">
-          Panamanian producer, DJ and engineer shaping the sonic identity
-          behind some of latin music’s most impactful records.
-        </p>
-      </div>
+          <h1 className="title">CRBRO.</h1>
+
+          <p className="body" style={{ marginTop: "26px", maxWidth: "720px" }}>
+            Panamanian producer, DJ and engineer shaping the sonic identity
+            behind some of Latin music&apos;s most impactful records.
+          </p>
+        </div>
+      </section>
+
+      <Footer />
     </main>
   );
 }
