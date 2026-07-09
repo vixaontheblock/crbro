@@ -1,23 +1,23 @@
 export default function Marquee() {
-  const items = [
+  const names = [
     "SECH",
     "J BALVIN",
     "ROSALÍA",
     "FARRUKO",
     "WISIN & YANDEL",
-    "MUSIC",
-    "PANAMA",
-    "CRBRO",
   ];
 
-  const row = [...items, ...items];
-
   return (
-    <section className="marquee">
-      <div className="marquee-track">
-        {row.map((item, index) => (
-          <span key={`${item}-${index}`}>{item}</span>
-        ))}
+    <section className="collab-strip">
+      <div className="container">
+        <div className="collab-strip-inner">
+          <span className="collab-strip-label">Trusted by</span>
+          <div className="collab-strip-names">
+            {names.map((name) => (
+              <span key={name}>{name}</span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
