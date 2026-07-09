@@ -6,13 +6,15 @@ export default function About() {
     <section id="about" className="section about-section">
       <div className="container about-grid">
         <div className="about-intro">
-          <p className="eyebrow">About</p>
+          <div className="section-intro">
+            <span className="kicker">About</span>
 
-          <h2 className="title">
-            Built from Panama.
-            <br />
-            Heard worldwide.
-          </h2>
+            <h2 className="title">
+              Built from Panama.
+              <br />
+              Heard worldwide.
+            </h2>
+          </div>
 
           <div className="about-photo-frame">
             <Image
