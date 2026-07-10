@@ -6,12 +6,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 export default function Credits() {
   const audioRef = useRef(null);
   const railRef = useRef(null);
-  const shellRef = useRef(null);
   const playingIdRef = useRef(null);
   const hasInteracted = useRef(false);
-  const activeIndexRef = useRef(0);
-  const isSteppingRef = useRef(false);
-  const programmaticRef = useRef(false);
 
   const [tracks, setTracks] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -61,18 +57,8 @@ export default function Credits() {
     };
   }, []);
 
-  // Keep a live ref of the active index for the wheel/keyboard handlers.
+  // Scroll active card into view when activeIndex changes programmatically
   useEffect(() => {
-    activeIndexRef.current = activeIndex;
-  }, [activeIndex]);
-
-  // Smoothly center the active card ONLY for programmatic changes
-  // (wheel step, keyboard, card click). Native swipe scrolling is left
-  // untouched so it stays buttery on touch devices.
-  useEffect(() => {
-    if (!programmaticRef.current) return;
-    programmaticRef.current = false;
-
     const rail = railRef.current;
     if (!rail || tracks.length === 0) return;
     const card = rail.querySelector(`[data-credit-index="${activeIndex}"]`);
@@ -81,56 +67,6 @@ export default function Credits() {
     const cardCenter = card.offsetLeft + card.clientWidth / 2;
     rail.scrollTo({ left: cardCenter - railCenter, behavior: "smooth" });
   }, [activeIndex, tracks]);
-
-  // Wheel navigation: one gesture = one credit, smooth and locked.
-  useEffect(() => {
-    const shell = shellRef.current;
-    if (!shell) return;
-
-    function onWheel(event) {
-      const rail = railRef.current;
-      if (!rail || tracks.length === 0) return;
-      if (window.innerWidth <= 900) return; // mobile uses native swipe
-
-      const delta =
-        Math.abs(event.deltaX) > Math.abs(event.deltaY)
-          ? event.deltaX
-          : event.deltaY;
-
-      const dir = delta > 0 ? 1 : -1;
-      const maxScroll = rail.scrollWidth - rail.clientWidth;
-      const atStart = rail.scrollLeft <= 2;
-      const atEnd = rail.scrollLeft >= maxScroll - 2;
-
-      // Let the page scroll normally when we reach either edge.
-      if ((dir < 0 && atStart) || (dir > 0 && atEnd)) return;
-
-      event.preventDefault();
-
-      if (!hasInteracted.current) {
-        hasInteracted.current = true;
-        setShowHint(false);
-      }
-
-      if (isSteppingRef.current || Math.abs(delta) < 6) return;
-
-      const current = activeIndexRef.current;
-      const next = Math.max(0, Math.min(current + dir, tracks.length - 1));
-      if (next === current) return;
-
-      isSteppingRef.current = true;
-      programmaticRef.current = true;
-      stopPreview();
-      setActiveIndex(next);
-
-      window.setTimeout(() => {
-        isSteppingRef.current = false;
-      }, 620);
-    }
-
-    shell.addEventListener("wheel", onWheel, { passive: false });
-    return () => shell.removeEventListener("wheel", onWheel);
-  }, [tracks]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -193,16 +129,22 @@ export default function Credits() {
     if (!rail) return;
     if (window.innerWidth <= 900) return;
 
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
+    const rawDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY)
       ? event.deltaX : event.deltaY;
 
     const maxScroll = rail.scrollWidth - rail.clientWidth;
     const atStart = rail.scrollLeft <= 2;
     const atEnd = rail.scrollLeft >= maxScroll - 2;
-    if ((delta < 0 && atStart) || (delta > 0 && atEnd)) return;
+    if ((rawDelta < 0 && atStart) || (rawDelta > 0 && atEnd)) return;
 
     event.preventDefault();
-    rail.scrollBy({ left: delta, behavior: "auto" });
+
+    // Dampen + cap so a single wheel notch never skips past a card.
+    const dampened = rawDelta * 0.4;
+    const maxStep = 120;
+    const step = Math.max(Math.min(dampened, maxStep), -maxStep);
+
+    rail.scrollBy({ left: step, behavior: "auto" });
   }
 
   // Click card to activate it
@@ -244,7 +186,7 @@ export default function Credits() {
       <div className="container">
         <div className="credits-carousel-head">
           <div className="section-intro">
-            <span className="kicker">Selected Credits</span>
+            <span className="tag-label">Selected Credits</span>
             <h2 className="title credits-carousel-title">Records in motion.</h2>
           </div>
           <p className="body credits-carousel-body">
