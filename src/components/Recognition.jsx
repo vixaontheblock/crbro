@@ -22,7 +22,7 @@ export default function Recognition() {
     <section className="recognition-section">
       <div className="container recognition-grid">
         <div className="section-intro">
-          <span className="kicker">Recognition</span>
+          <span className="tag-label">Recognition</span>
 
           <h2 className="title">
             The sound behind the movement.
