@@ -27,7 +27,7 @@ export default function WorkModes() {
       <div className="container">
         <div className="section-head">
           <div className="section-intro">
-            <span className="kicker">Work Modes</span>
+            <span className="tag-label">Work Modes</span>
 
             <h2 className="title">
               Built for records, sessions and stages.
