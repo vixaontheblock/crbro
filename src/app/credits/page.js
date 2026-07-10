@@ -18,7 +18,7 @@ export default function CreditsPage() {
       <section className="credits-section" style={{ paddingTop: "180px" }}>
         <div className="container">
           <div className="section-intro">
-            <span className="kicker">Credits</span>
+            <span className="tag-label">Credits</span>
             <h1 className="title">Selected works.</h1>
           </div>
 
