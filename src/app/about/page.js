@@ -8,7 +8,7 @@ export default function AboutPage() {
 
       <section className="section" style={{ paddingTop: "180px" }}>
         <div className="container section-intro">
-          <span className="kicker">About</span>
+          <span className="tag-label">About</span>
 
           <h1 className="title">CRBRO.</h1>
 
