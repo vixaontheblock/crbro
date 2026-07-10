@@ -34,7 +34,7 @@ export default function Booking() {
     <section id="booking" className="section">
       <div className="container booking-grid">
         <div className="section-intro">
-          <span className="kicker">Booking</span>
+          <span className="tag-label">Booking</span>
 
           <h2 className="title">Let&apos;s create something iconic.</h2>
 
