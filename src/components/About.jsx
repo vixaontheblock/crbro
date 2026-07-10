@@ -7,7 +7,7 @@ export default function About() {
       <div className="container about-grid">
         <div className="about-intro">
           <div className="section-intro">
-            <span className="kicker">About</span>
+            <span className="tag-label">About</span>
 
             <h2 className="title">
               Built from Panama.
