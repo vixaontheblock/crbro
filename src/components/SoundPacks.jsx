@@ -56,7 +56,7 @@ export default function SoundPacks() {
         <div className="container">
           <div className="section-head">
             <div className="section-intro">
-              <span className="kicker">Sound Packs</span>
+              <span className="tag-label">Sound Packs</span>
 
               <h2 className="title">
                 Sounds made for producers, artists and sessions.
@@ -127,7 +127,7 @@ export default function SoundPacks() {
             </button>
 
             <div className="pack-modal-head">
-              <span className="kicker">Pack Preview</span>
+              <span className="tag-label">Pack Preview</span>
 
               <h2>{selectedPack.title}</h2>
 
