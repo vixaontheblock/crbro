@@ -16,7 +16,7 @@ export default function ContactPage() {
         }}
       >
         <div className="container" style={{ textAlign: "center" }}>
-          <span className="kicker">Contact</span>
+          <span className="tag-label">Contact</span>
 
           <h1 className="title" style={{ marginTop: "26px" }}>
             Let&apos;s talk.
