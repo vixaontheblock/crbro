@@ -9,7 +9,7 @@ export default function BookingPage() {
       <section className="section" style={{ paddingTop: "180px" }}>
         <div className="container">
           <div className="section-intro">
-            <span className="kicker">Booking</span>
+            <span className="tag-label">Booking</span>
             <h1 className="title">Work with CRBRO.</h1>
           </div>
 
